@@ -1,0 +1,9 @@
+
+SQLSTATE[HY000] [1045] Access denied for user 'dns'@'localhost' (using password: YES)
+SQLSTATE[HY000] [1045] Access denied for user 'dns'@'localhost' (using password: YES)
+SQLSTATE[HY000] [1045] Access denied for user 'pr'@'localhost' (using password: YES)
+SQLSTATE[28000] [1045] Access denied for user 'processing'@'localhost' (using password: YES)
+SQLSTATE[28000] [1045] Access denied for user 'processing'@'localhost' (using password: YES)
+SQLSTATE[28000] [1045] Access denied for user 'processing'@'localhost' (using password: YES)
+SQLSTATE[28000] [1045] Access denied for user 'processing'@'localhost' (using password: YES)
+SQLSTATE[28000] [1045] Access denied for user 'processing'@'localhost' (using password: YES)

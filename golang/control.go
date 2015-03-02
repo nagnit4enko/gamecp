@@ -5,6 +5,7 @@ import(
 	"os/exec"
 	"strings"
 	"net/http"
+	"io/ioutil"
 )
 
 var COMMAND string
@@ -44,10 +45,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		default:
 			fmt.Fprintf(w, "Nothing to do...")
 			return
-			
+				
 		case "csgo":
-			fmt.Fprintf(w, "Let`s restart CSGO server... ")
-			
 			USER = r.URL.Query().Get("user")
 			if len(USER) == 0 {
 				fmt.Fprintf(w, "No user")
@@ -71,19 +70,31 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-			if!(CMD == "restart" || CMD == "start" || CMD == "stop"){
+			if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log"){
 				fmt.Fprintf(w, "Wrong cmd")
 				return
 			}
 			
+			if(CMD == "log"){
+				out, err := ioutil.ReadFile("/home/"+USER+"/log/console/csgo-server-console.log")
+				if err != nil {
+					fmt.Fprintf(w, "error")
+					return
+				}
+				fmt.Fprintf(w, string(out))
+			}
+			
 			cmd := exec.Command("su", "-", USER, "-c", "/home/"+USER+"/csgoserver "+CMD)
-			out, err := cmd.Output()
+			_, err := cmd.Output()
+			//out, err := cmd.Output()
 			if err != nil {
-				fmt.Fprintf(w, err.Error())
+				//fmt.Fprintf(w, err.Error()) => это запишем в errors.log
+				fmt.Fprintf(w, "error")
 				return
 			}
 			
-			fmt.Fprintf(w, string(out))
+			//fmt.Fprintf(w, string(out)) => это тоже можно записывать, например в success.log
+			fmt.Fprintf(w, "OK")
 			return
 	}
 }

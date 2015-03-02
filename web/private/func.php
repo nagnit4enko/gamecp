@@ -1,6 +1,39 @@
 <?
+function curl_query($link, $post){
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL,$link);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36');
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+		
+		if($post !== null){
+			curl_setopt($ch, CURLOPT_REFERER, 'https://lepus.su');
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+		}
+		
+		$data = curl_exec($ch);	
+		curl_close($ch);
+		return $data;
+}
+
 function __autoload($class_name) {
 	include $_SERVER['DOCUMENT_ROOT'].'/private/class/'.$class_name.'.class.php';
+}
+
+function csgo_info($ip, $port){
+	define( 'SQ_SERVER_ADDR', $ip );
+	define( 'SQ_SERVER_PORT', $port );
+	define( 'SQ_TIMEOUT',     1 );
+	define( 'SQ_ENGINE',      SourceQuery :: SOURCE );
+	
+	$Query = new SourceQuery();
+	$Query->Connect( SQ_SERVER_ADDR, SQ_SERVER_PORT, SQ_TIMEOUT, SQ_ENGINE );
+	$i = $Query->GetInfo();
+	$Query->Disconnect();
+	return $i;
 }
 
 function error($message){
