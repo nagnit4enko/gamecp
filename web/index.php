@@ -10,5 +10,6 @@ switch(@$_GET['do']){
 			else						require_once($_SERVER['DOCUMENT_ROOT'].'/private/template/login.php');
 	break;
 	
+	case 'info': require_once($_SERVER['DOCUMENT_ROOT'].'/private/template/info.php'); break;
 	case 'exit': _exit(); break;
 }

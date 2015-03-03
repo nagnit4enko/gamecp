@@ -70,7 +70,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-			if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log"){
+			if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update"){
 				fmt.Fprintf(w, "Wrong cmd")
 				return
 			}

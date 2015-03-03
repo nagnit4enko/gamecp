@@ -1,4 +1,17 @@
 <?
+function get_servers(){
+	global $db, $user; $i = '';
+	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id ORDER BY `port` DESC");
+	$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
+	$query->execute();
+	if($query->rowCount() > 0){
+		while($row=$query->fetch()){
+			$i = $i."<li><a href=\"/index.php?do=info&server=".urlencode(base64_encode($row['name']))."\"> {$row['ip']}:{$row['port']} </a></li>";
+		}
+	}
+	return $i;
+}
+
 function curl_query($link, $post){
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL,$link);
@@ -21,6 +34,19 @@ function curl_query($link, $post){
 
 function __autoload($class_name) {
 	include $_SERVER['DOCUMENT_ROOT'].'/private/class/'.$class_name.'.class.php';
+}
+
+
+function server_info($name){
+	global $db, $user;
+	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id AND `name` = :name");
+	$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
+	$query->bindParam(':name', $name, PDO::PARAM_STR);
+	$query->execute();
+	if($query->rowCount() != 1) die("no access");
+	$row=$query->fetch();
+	$i = ["ip" => $row['ip'], "port" => $row['port']];
+	return $i;
 }
 
 function csgo_info($ip, $port){
