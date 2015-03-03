@@ -6,8 +6,11 @@
 	$server = server_info($server_name);
 
 	$server_info = csgo_info($server['ip'], $server['port']);
-	$server_log = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user=csgoserver10&cmd=log", NULL);
-	$menu = get_servers(); 
+	$server_log = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=log", NULL);
+	$menu = get_servers();
+	
+	$server_demo = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=gotv", NULL);
+	$demo_arr = json_decode($server_demo, true);	
  ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>gameCP</title>
+    <title>Панель уравления</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/metisMenu.min.css" rel="stylesheet">
     <link href="/css/dataTables.bootstrap.css" rel="stylesheet">
@@ -27,129 +30,136 @@
 	<link href="/css/alertify.core.css" rel="stylesheet">
 	<link href="/css/alertify.bootstrap.css" rel="stylesheet">
 </head>
-
 <body>
-
 <div id="myModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-               <center> <h4 class="modal-title">Пожалуйста, подождите.</h4> </center>
-            </div>
-            <div id="modal_info" class="modal-body"></div>
-        </div>
-    </div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<center> <h4 class="modal-title">Пожалуйста, подождите.</h4> </center>
+			</div>
+			<div id="modal_info" class="modal-body"></div>
+		</div>
+	</div>
 </div>
-
-    <div id="wrapper">
-
-        <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/">GameCP</a>
-            </div>
-            <!-- /.navbar-header -->
-<ul class="nav navbar-top-links navbar-right">
-    <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-            <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
-        </a>
-        <ul class="dropdown-menu dropdown-user">
-            <li><a href="/?do=settings"><i class="fa fa-gear fa-fw"></i> Settings</a>
-            </li>
-            <li class="divider"></li>
-            <li><a href="/?do=exit"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-            </li>
-        </ul>
-    </li>
-    </ul>
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
-					    <li><a href="/index.php?do=default"><i class="fa fa-newspaper-o fa-fw"></i> News</a></li>
+<div id="wrapper">
+	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/">Панель управления</a>
+		</div>
+		<ul class="nav navbar-top-links navbar-right">
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i></a>
+				<ul class="dropdown-menu dropdown-user">
+					<li><a href="/?do=settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
+					<li class="divider"></li>
+					<li><a href="/?do=exit"><i class="fa fa-sign-out fa-fw"></i> Выход</a></li>
+				</ul>
+			</li>
+		</ul>
+		
+		<div class="navbar-default sidebar" role="navigation">
+			<div class="sidebar-nav navbar-collapse">
+				<ul class="nav" id="side-menu">
+					<li><a href="/index.php?do=default"><i class="fa fa-newspaper-o fa-fw"></i> Новости</a></li>
 						<li>
-                            <a href="#"><i class="fa fa-desktop"></i> CSGO Servers<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-								<? echo $menu; ?>
-							</ul>
+                            <a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level"><? echo $menu; ?></ul>
 						</li>
-                    </ul>
-				
-                </div>
-				
-            </div>
-			
-            <!-- /.navbar-static-side -->
-        </nav>
-		
-		
-
-        <div id="page-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header">Server Info</h1>
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <!-- /.row -->
-            <div class="row">
-				<div class="col-md-12 news6">
-				<div class="panel panel-default">
-				<div class="panel-heading">
-				<strong style="margin-left: 0px;">CSGO <? echo "{$server['ip']}:{$server['port']}"; ?></strong> 
-				<input data-server-restart="<? echo $server_name; ?>" type="submit" class="btn btn-primary btn-xs" value="restart">
-				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary btn-xs" value="stop">
-				<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary btn-xs" value="start">
-				<input data-server-update="<? echo $server_name; ?>" type="submit" class="btn btn-primary btn-xs" value="server update">
-				<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-primary btn-xs" value="update log">
-				<input data-server-gotv="<? echo $server_name; ?>" type="submit" class="btn btn-primary btn-xs" value="GOTV">
-				</div><!-- /.panel-heading -->
-				<div class="panel-body">
-				
-				
-				<p>Online: <? echo $server_info['Players']."/".$server_info['MaxPlayers']; ?><br/>
-					Map: <? echo $server_info['Map']; ?><br/>
-					Server version: <? echo $server_info['Version']; ?></p>
-					
-				<pre id="log_<? echo $server_name; ?>" style="max-height:300px;overflow:auto;"> <? echo $server_log; ?> </pre>
-				
-				</div><!-- /.panel-body -->
+					</ul>
+			</div>
+		</div>
+	</nav>
+	<div id="page-wrapper">
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header"><? echo strip_tags($server_info['HostName']); ?>	
+				<!--<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Включить">
+				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Выключить"> -->
+				<input data-server-restart="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Перезагрузить">
+				<input data-server-update="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить">
+				</h1>
+			</div>
+		</div>
+		<div role="tabpanel">
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Информация</a></li>
+				<li role="presentation"><a href="#console" aria-controls="console" role="tab" data-toggle="tab">Консоль</a></li>
+				<li role="presentation"><a href="#gotv" aria-controls="gotv" role="tab" data-toggle="tab">Демо</a></li>
+			</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane fade in active" id="info">
+					<div class="panel-body">
+					IP: <? echo "{$server['ip']}:{$server['port']}"; ?> <br/>
+					Online: <? echo intval($server_info['Players'])."/".intval($server_info['MaxPlayers']); ?><br/>
+					Map: <? echo strip_tags($server_info['Map']); ?><br/>
+					Server version: <? echo strip_tags($server_info['Version']); ?>
+					</div>
 				</div>
+				<div role="tabpanel" class="tab-pane fade" id="console">
+					<div class="panel-body">
+						<pre id="log_<? echo $server_name; ?>" style="max-height:580px;overflow:auto;"> <? echo $server_log; ?> </pre>
+						<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-info" style="width: 100%;" value="Обновить">
+					</div>
 				</div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <!-- /.row -->
+				<div role="tabpanel" class="tab-pane fade" id="gotv">
+					<div class="panel-body">
+						<div class="dataTable_wrapper">
+							<table class="table table-striped table-bordered table-hover" id="dataTables-example">
+								<thead>
+									<tr>
+										<th style="text-align: center;">Name</th>
+										<th style="text-align: center;">Size</th>
+										<th style="text-align: center;">Download</th>
+										<th style="text-align: center;">Delete</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?
+								foreach ($demo_arr as $val) {
+									if(empty($val)) continue;
+									echo "<tr>";
+									echo "<td><center>".strip_tags($val['name'])."</center></td>";
+									echo "<td><center>".bytesToSize1000(intval($val['size']))."</center></td>";
+									echo "<td><center><i class=\"fa fa-download fa-fw\"></i></center></td>";
+									echo "<td><center><i class=\"glyphicon glyphicon-remove\"></i></center></td>";
+									echo "</tr>";
+								}
+								?>
+								</tbody>
+							</table>
+						</div>
+					</div> 
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script> 
+<script src="/js/bootstrap-hover-dropdown.min.js"></script>
+<script src="/js/metisMenu.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
+<script src="/js/dataTables.bootstrap.min.js"></script>
+<script src="/js/sb-admin-2.js"></script>
+<script src="/js/alertify.min.js"></script>
+<script>
+	$(document).ready(function() {
+		$('#dataTables-example').DataTable({
+			stateSave: true
+		});
+	});
 
-        </div>
-        <!-- /#page-wrapper -->
+	$(".spoiler-trigger").click(function() {
+		$(this).blur();
+		$(this).parent().next().collapse('toggle');
+	});
 
-    </div>
-    <!-- /#wrapper -->
-
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/metisMenu.min.js"></script>
-    <script src="/js/jquery.dataTables.min.js"></script>
-    <script src="/js/dataTables.bootstrap.min.js"></script>
-    <script src="/js/sb-admin-2.js"></script>
-	<script src="/js/alertify.min.js"></script>
-
-    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
-    <script>
-    $(document).ready(function() {
-        $('#dataTables-example').DataTable({
-				stateSave: true
-        });
-    });
-    </script>
-	
-	<script>
 	$(document).on("click", "[data-server-restart]", function(e) {
 		$(this).blur();
 		$('#myModal').modal('show');
@@ -192,7 +202,7 @@
 		});
 	});
 	
-		$(document).on("click", "[data-server-update]", function(e) {
+	$(document).on("click", "[data-server-update]", function(e) {
 		$(this).blur();
 		$('#myModal').modal('show');
 		$("#modal_info").html("<center>Специально обученная обезьяна обновляет ваш сервер.</center>");
@@ -214,10 +224,7 @@
 		$(document).on("click", "[data-server-log]", function(e) {
 		$(this).blur();
 		div_name =	"log_"+$(this).data("server-log");
-		//$('#myModal').modal('show');
-		//$("#modal_info").html("<center>Специально обученная обезьяна достает логи сервера.</center>");
 		$.post("http://"+document.domain+"/public/cmd.php", {command: 'log', user: $(this).data("server-log")}, function( data ){
-				//$('#myModal').modal('hide');
 				if(data == 'error'){
 					alertify.error('Ошибка'); return;
 				} else {
@@ -228,7 +235,6 @@
 				}
 		});
 	});
-	</script>
+</script>
 </body>
-
 </html>

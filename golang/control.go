@@ -2,6 +2,9 @@ package main
 import(
 	"fmt"
 	"regexp"
+//	"strconv"
+"encoding/json"
+	"os"
 	"os/exec"
 	"strings"
 	"net/http"
@@ -19,6 +22,10 @@ const (
 	SECRET_KEY	= "IwEXsHv4FoQz5iwwPsOgw98jVYqbJHsq"
 )
 
+type Foo struct {
+	Name	string	`json:"name"`
+	Size	int64	`json:"size"`
+}
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	ip := strings.Split(r.RemoteAddr,":")[0]
@@ -70,7 +77,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-			if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update"){
+			if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update" || CMD == "gotv"){
 				fmt.Fprintf(w, "Wrong cmd")
 				return
 			}
@@ -82,6 +89,26 @@ func handler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				fmt.Fprintf(w, string(out))
+			}
+			
+			if(CMD == "gotv"){
+			var i int
+			datas := make(map[string]Foo)
+			files, _ := ioutil.ReadDir("/home/"+USER+"/serverfiles/csgo/GOTV/")
+				for _, f := range files {
+				
+					file, err := os.Stat("/home/"+USER+"/serverfiles/csgo/GOTV/"+f.Name())
+					if err != nil {
+						fmt.Fprintf(w, "error")
+						return
+					}
+					
+					datas[fmt.Sprint(i)] = Foo{Name: f.Name(), Size: file.Size()}
+					i++
+				}
+			j, _ := json.Marshal(datas)
+			fmt.Fprintf(w, string(j))
+			return
 			}
 			
 			cmd := exec.Command("su", "-", USER, "-c", "/home/"+USER+"/csgoserver "+CMD)

@@ -15,35 +15,31 @@
 	<link href="/css/alertify.bootstrap.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-	
+<div class="container">
 	<div class="row">
-	<div class="col-md-4 col-md-offset-4 text-center" style="margin-top: 40px;margin-bottom: -55px;">
-	</a>
+		<div class="col-md-4 col-md-offset-4 text-center" style="margin-top: 40px;margin-bottom: -55px;"></div>
 	</div>
+	<div class="row">
+		<div class="col-md-4 col-md-offset-4">
+			<div class="login-panel panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Вход в панель</h3>
+				</div>
+				<div class="panel-body">
+					<fieldset>
+						<div class="form-group">
+							<input class="form-control" id="login" placeholder="Логин" name="email" type="email" autofocus>
+						</div>
+						<div class="form-group">
+							<input class="form-control" id="password" placeholder="Пароль" name="password" type="password" value="">
+						</div>
+							<input id="do_login" type="submit" class="btn btn-lg btn-success btn-block" value="Войти">
+					</fieldset>
+				</div>
+			</div>
+		</div>
 	</div>
-        <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-                <div class="login-panel panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Вход в панель</h3>
-                    </div>
-                    <div class="panel-body">
-                            <fieldset>
-                                <div class="form-group">
-                                    <input class="form-control" id="login" placeholder="Логин" name="email" type="email" autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <input class="form-control" id="password" placeholder="Пароль" name="password" type="password" value="">
-                                </div>
-                                <input id="do_login" type="submit" class="btn btn-lg btn-success btn-block" value="Войти">
-                            </fieldset>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+</div>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/metisMenu.min.js"></script>

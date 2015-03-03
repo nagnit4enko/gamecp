@@ -1,7 +1,7 @@
 <?
 function get_servers(){
 	global $db, $user; $i = '';
-	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id ORDER BY `port` DESC");
+	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id ORDER BY `port` ASC");
 	$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
 	$query->execute();
 	if($query->rowCount() > 0){
@@ -10,6 +10,17 @@ function get_servers(){
 		}
 	}
 	return $i;
+}
+
+function bytesToSize1000($bytes, $precision = 2)
+{
+    // human readable format -- powers of 1000
+    //
+    $unit = array('b','kb','mb','gb','tb','pb','eb');
+
+    return @round(
+        $bytes / pow(1000, ($i = floor(log($bytes, 1000)))), $precision
+    ).' '.$unit[$i];
 }
 
 function curl_query($link, $post){

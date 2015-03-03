@@ -8,6 +8,8 @@ if(empty($_POST['command']) || empty($_POST['user'])) die('empty');
 if(preg_match('/[^0-9a-z]/', $_POST['user'])) die('er_user');
 if(($_POST['command'] != 'restart')  && ($_POST['command'] != 'stop') && ($_POST['command'] != 'start') && ($_POST['command'] != 'log') && ($_POST['command'] != 'update')) die('er_command');
 
-echo curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user=csgoserver10&cmd={$_POST['command']}", NULL);
+// написать проверку прав
+
+echo curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$_POST['user']}&cmd={$_POST['command']}", NULL);
 
 
