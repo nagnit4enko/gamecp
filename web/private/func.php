@@ -1,4 +1,13 @@
 <?
+function nginx_link($server, $file){
+	global $user;
+	$domain = 'http://game.lepus.su';
+	$dir = "/gotv/$server/";
+	$time = time()+60*60*24;
+	$key = str_replace("=", "", strtr(base64_encode(md5($time.$dir.$file.getenv("REMOTE_ADDR")." {$user['nginx_key']}", TRUE)), "+/", "-_"));
+	return htmlspecialchars($domain.$dir.$file."?hash=$key&time=$time");
+}
+
 function get_servers(){
 	global $db, $user; $i = '';
 	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id ORDER BY `port` ASC");
@@ -12,15 +21,8 @@ function get_servers(){
 	return $i;
 }
 
-function bytesToSize1000($bytes, $precision = 2)
-{
-    // human readable format -- powers of 1000
-    //
-    $unit = array('b','kb','mb','gb','tb','pb','eb');
-
-    return @round(
-        $bytes / pow(1000, ($i = floor(log($bytes, 1000)))), $precision
-    ).' '.$unit[$i];
+function bytesToSize1000($bytes){
+    return @round($bytes / pow(1000, ($i = floor(log($bytes, 1000)))), 2);
 }
 
 function curl_query($link, $post){
@@ -106,7 +108,7 @@ function auth($login, $session){
 	}
 	
 	$row = $query->fetch();
-	return ["id" => $row['id']];
+	return ["id" => $row['id'], "nginx_key" => $row['nginx_key']];
 }
 
 function login($login, $passwd){

@@ -1,24 +1,24 @@
 package main
 import(
+	"os"
 	"fmt"
 	"regexp"
-//	"strconv"
-"encoding/json"
-	"os"
 	"os/exec"
 	"strings"
 	"net/http"
 	"io/ioutil"
+	"encoding/json"
 )
 
 var COMMAND string
 var USER string
+var FILE string
 var CMD string
 
 const (
     PORT		= ":8081"
-    SSL_CRT		= "./site.crt"
-    SSL_KEY		= "./site.key"
+    SSL_CRT		= "/root/site.crt"
+    SSL_KEY		= "/root/site.key"
 	SECRET_KEY	= "IwEXsHv4FoQz5iwwPsOgw98jVYqbJHsq"
 )
 
@@ -77,9 +77,31 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-			if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update" || CMD == "gotv"){
+			if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update" || CMD == "gotv" || CMD == "delete"){
 				fmt.Fprintf(w, "Wrong cmd")
 				return
+			}
+			
+			if(CMD == "delete"){
+			FILE = r.URL.Query().Get("file")
+			if len(FILE) == 0 {
+				fmt.Fprintf(w, "No file")
+				return
+			}
+			
+			re := regexp.MustCompile("^[a-zA-Z0-9_.-]*$")
+			if(re.MatchString(FILE) == false){
+				fmt.Fprintf(w, "wrong file")
+				return
+			}
+			
+			err := os.Remove("/home/"+USER+"/serverfiles/csgo/GOTV/"+FILE)
+				if err != nil {
+					fmt.Fprintf(w, "error no file")
+					return
+				}
+			fmt.Fprintf(w, "OK")
+			return
 			}
 			
 			if(CMD == "log"){

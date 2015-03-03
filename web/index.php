@@ -11,7 +11,5 @@ switch(@$_GET['do']){
 	break;
 	
 	case 'info': require_once($_SERVER['DOCUMENT_ROOT'].'/private/template/info.php'); break;
-	case 'info2': require_once($_SERVER['DOCUMENT_ROOT'].'/private/template/info2.php'); break;
-	case 'info3': require_once($_SERVER['DOCUMENT_ROOT'].'/private/template/info3.php'); break;
 	case 'exit': _exit(); break;
 }

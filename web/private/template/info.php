@@ -114,21 +114,23 @@
 								<thead>
 									<tr>
 										<th style="text-align: center;">Name</th>
-										<th style="text-align: center;">Size</th>
+										<th style="text-align: center;">Size (Mb)</th>
 										<th style="text-align: center;">Download</th>
 										<th style="text-align: center;">Delete</th>
 									</tr>
 								</thead>
 								<tbody>
 								<?
+								$tr = 0;
 								foreach ($demo_arr as $val) {
 									if(empty($val)) continue;
-									echo "<tr>";
+									echo "<tr id=\"$tr\">";
 									echo "<td><center>".strip_tags($val['name'])."</center></td>";
 									echo "<td><center>".bytesToSize1000(intval($val['size']))."</center></td>";
-									echo "<td><center><i class=\"fa fa-download fa-fw\"></i></center></td>";
-									echo "<td><center><i class=\"glyphicon glyphicon-remove\"></i></center></td>";
+									echo "<td><center><a href=\"".nginx_link($server_name, strip_tags($val['name']))."\"><i class=\"fa fa-download fa-fw\"></i></a></center></td>";
+									echo "<td><center><a data-delete-id=\"$tr\" data-server-name=\"$server_name\" data-demo-name=\"".strip_tags($val['name'])."\" href=\"#\"><i class=\"glyphicon glyphicon-remove\"></i></a></center></td>";
 									echo "</tr>";
+									$tr++;
 								}
 								?>
 								</tbody>
@@ -149,6 +151,23 @@
 <script src="/js/sb-admin-2.js"></script>
 <script src="/js/alertify.min.js"></script>
 <script>
+$(document).on("click", "[data-delete-id]", function(e) {
+	e.preventDefault();
+	var table = $('#dataTables-example').dataTable();
+	tr_id = $(this).data("delete-id");
+	$.post("http://"+document.domain+"/public/cmd.php", { command: 'delete', user: $(this).data("server-name"), file: $(this).data("demo-name")}, function( data ){
+		$('#myModal').modal('hide');
+		if(data == 'OK'){
+			table.fnDeleteRow(table.$("#"+tr_id));
+			alertify.success('Выполнено');
+			return;
+		} else {
+			alertify.error('Ошибка'); return;
+		}
+	});
+	
+
+});
 	$(document).ready(function() {
 		$('#dataTables-example').DataTable({
 			stateSave: true
