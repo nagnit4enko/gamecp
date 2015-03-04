@@ -104,7 +104,7 @@
 				<div role="tabpanel" class="tab-pane fade" id="console">
 					<div class="panel-body">
 						<pre id="log_<? echo $server_name; ?>" style="max-height:580px;overflow:auto;"> <? echo $server_log; ?> </pre>
-						<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-info" style="width: 100%;" value="Обновить">
+						<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-info" value="Обновить">
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">
@@ -113,10 +113,10 @@
 							<table class="table table-striped table-bordered table-hover" id="dataTables-example">
 								<thead>
 									<tr>
-										<th style="text-align: center;">Name</th>
-										<th style="text-align: center;">Size (Mb)</th>
-										<th style="text-align: center;">Download</th>
-										<th style="text-align: center;">Delete</th>
+										<th style="text-align: center;">Название</th>
+										<th style="text-align: center;">Размер (Мб)</th>
+										<th style="text-align: center;">Скачать</th>
+										<th style="text-align: center;">Удалить</th>
 									</tr>
 								</thead>
 								<tbody>
