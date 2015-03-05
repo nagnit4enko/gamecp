@@ -49,16 +49,25 @@ function __autoload($class_name) {
 	include $_SERVER['DOCUMENT_ROOT'].'/private/class/'.$class_name.'.class.php';
 }
 
-
-function server_info($name){
+function get_access($name){
 	global $db, $user;
 	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id AND `name` = :name");
 	$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
 	$query->bindParam(':name', $name, PDO::PARAM_STR);
 	$query->execute();
-	if($query->rowCount() != 1) die("no access");
-	$row=$query->fetch();
-	$i = ["ip" => $row['ip'], "port" => $row['port']];
+	
+	if($query->rowCount() != 1)
+		$i =  ["accsess" => FALSE]; 
+	else
+		$i = ["accsess" => TRUE, "data" => $query->fetch()];
+	
+	return $i;
+}
+
+function server_info($name){
+	$row = get_access($name);
+	if(!$row["accsess"]) die("no_accsess");
+	$i = ["ip" => $row['data']['ip'], "port" => $row['data']['port']];
 	return $i;
 }
 

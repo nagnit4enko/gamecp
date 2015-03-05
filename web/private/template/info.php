@@ -90,23 +90,27 @@
 		<div role="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
 				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Информация</a></li>
-				<li role="presentation"><a href="#console" aria-controls="console" role="tab" data-toggle="tab">Консоль</a></li>
+				<li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Конфигурация</a></li>
 				<li role="presentation"><a href="#gotv" aria-controls="gotv" role="tab" data-toggle="tab">Демо</a></li>
-				<li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Конфиг</a></li>
+				<li role="presentation"><a href="#console" aria-controls="console" role="tab" data-toggle="tab">Консоль</a></li>
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane fade in active" id="info">
 					<div class="panel-body">
+					Игра: <? echo strip_tags($server_info['ModDesc']); ?><br/>
 					IP: <? echo "{$server['ip']}:{$server['port']}"; ?> <br/>
-					Online: <? echo intval($server_info['Players'])."/".intval($server_info['MaxPlayers']); ?><br/>
-					Map: <? echo strip_tags($server_info['Map']); ?><br/>
-					Server version: <? echo strip_tags($server_info['Version']); ?>
+					GOTV: <? echo "{$server['ip']}:{$server_info['SpecPort']}"; ?> <br/>
+					Карта: <? echo strip_tags($server_info['Map']); ?><br/>
+					Онлайн: <? echo intval($server_info['Players'])."/".intval($server_info['MaxPlayers']); ?><br/>
+					Пароль: <? echo strip_tags(($server_info['Password'] ? true : false) ? 'есть' : 'нет'); ?><br/>
+					VAC: <? echo strip_tags(($server_info['Secure'] ? true : false) ? 'включен' : 'отключен'); ?><br/>
+					Версия: <? echo strip_tags($server_info['Version']); ?><br/>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="console">
 					<div class="panel-body">
 						<pre id="log_<? echo $server_name; ?>" style="max-height:580px;overflow:auto;"> <? echo $server_log; ?> </pre>
-						<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить">
+						<center><input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-primary" style="width: 30%;" value="Обновить"></center>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="config">
@@ -124,7 +128,7 @@
 									<tr>
 										<th style="text-align: center;">Время</th>
 										<th style="text-align: center;">Карта</th>
-										<th style="text-align: center;">Размер (Мб)</th>
+										<th style="text-align: center;">Размер (мб)</th>
 										<th style="text-align: center;">Скачать</th>
 										<th style="text-align: center;">Удалить</th>
 									</tr>
