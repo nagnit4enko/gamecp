@@ -7,6 +7,7 @@
 
 	$server_info = csgo_info($server['ip'], $server['port']);
 	$server_log = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=log", NULL);
+	$server_cnf = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=cnf", NULL);
 	$menu = get_servers();
 	
 	$server_demo = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=gotv", NULL);
@@ -81,8 +82,8 @@
 				<h1 class="page-header"><? echo strip_tags($server_info['HostName']); ?>	
 				<!--<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Включить">
 				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Выключить"> -->
-				<input data-server-restart="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Перезагрузить">
-				<input data-server-update="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить">
+				<input data-server-restart="<? echo $server_name; ?>" type="submit" class="btn btn-danger" value="Перезагрузить">
+				<input data-server-update="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить сервер">
 				</h1>
 			</div>
 		</div>
@@ -91,6 +92,7 @@
 				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Информация</a></li>
 				<li role="presentation"><a href="#console" aria-controls="console" role="tab" data-toggle="tab">Консоль</a></li>
 				<li role="presentation"><a href="#gotv" aria-controls="gotv" role="tab" data-toggle="tab">Демо</a></li>
+				<li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Конфиг</a></li>
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane fade in active" id="info">
@@ -104,7 +106,14 @@
 				<div role="tabpanel" class="tab-pane fade" id="console">
 					<div class="panel-body">
 						<pre id="log_<? echo $server_name; ?>" style="max-height:580px;overflow:auto;"> <? echo $server_log; ?> </pre>
-						<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-info" value="Обновить">
+						<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить">
+					</div>
+				</div>
+				<div role="tabpanel" class="tab-pane fade" id="config">
+					<div class="panel-body">
+						<textarea class="form-control" type="text" style="width:100%;height:550px;overflow:auto;resize:vertical;"><? echo $server_cnf; ?></textarea><br/>
+						<input type="submit" class="btn btn-info" style="width: 49%;" value="Обновить">
+						<input type="submit" class="btn btn-info" style="width: 49%;" value="Сохранить">
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">
@@ -113,7 +122,8 @@
 							<table class="table table-striped table-bordered table-hover" id="dataTables-example">
 								<thead>
 									<tr>
-										<th style="text-align: center;">Название</th>
+										<th style="text-align: center;">Время</th>
+										<th style="text-align: center;">Карта</th>
 										<th style="text-align: center;">Размер (Мб)</th>
 										<th style="text-align: center;">Скачать</th>
 										<th style="text-align: center;">Удалить</th>
@@ -125,10 +135,11 @@
 								foreach ($demo_arr as $val) {
 									if(empty($val)) continue;
 									echo "<tr id=\"$tr\">";
-									echo "<td><center>".strip_tags($val['name'])."</center></td>";
+									echo "<td><center>".strip_tags($val['time'])."</center></td>";
+									echo "<td><center>".strip_tags(strstr(substr($val['name'], 0, strpos($val['name'], '.')), 'de'))."</center></td>";
 									echo "<td><center>".bytesToSize1000(intval($val['size']))."</center></td>";
-									echo "<td><center><a href=\"".nginx_link($server_name, strip_tags($val['name']))."\"><i class=\"fa fa-download fa-fw\"></i></a></center></td>";
-									echo "<td><center><a data-delete-id=\"$tr\" data-server-name=\"$server_name\" data-demo-name=\"".strip_tags($val['name'])."\" href=\"#\"><i class=\"glyphicon glyphicon-remove\"></i></a></center></td>";
+									echo "<td><center><a href=\"".nginx_link($server_name, strip_tags($val['name']))."\" title=\"Скачать\"><i class=\"fa fa-download fa-fw\"></i></a></center></td>";
+									echo "<td><center><a data-delete-id=\"$tr\" data-server-name=\"$server_name\" data-demo-name=\"".strip_tags($val['name'])."\" href=\"#\" title=\"Удалить\"><i class=\"glyphicon glyphicon-remove\"></i></a></center></td>";
 									echo "</tr>";
 									$tr++;
 								}
@@ -154,19 +165,22 @@
 $(document).on("click", "[data-delete-id]", function(e) {
 	e.preventDefault();
 	var table = $('#dataTables-example').dataTable();
+	var ask = confirm("Вы уверены что хотите удалить демо?");
 	tr_id = $(this).data("delete-id");
-	$.post("http://"+document.domain+"/public/cmd.php", { command: 'delete', user: $(this).data("server-name"), file: $(this).data("demo-name")}, function( data ){
-		$('#myModal').modal('hide');
-		if(data == 'OK'){
-			table.fnDeleteRow(table.$("#"+tr_id));
-			alertify.success('Выполнено');
-			return;
-		} else {
-			alertify.error('Ошибка'); return;
-		}
+	if(ask == false) {
+		return;
+	} else {
+		$.post("http://"+document.domain+"/public/cmd.php", { command: 'delete', user: $(this).data("server-name"), file: $(this).data("demo-name")}, function( data ){
+			$('#myModal').modal('hide');
+			if(data == 'OK'){
+				table.fnDeleteRow(table.$("#"+tr_id));
+				alertify.success('Демо удалено');
+				return;
+			} else {
+				alertify.error('Ошибка'); return;
+			}
 	});
-	
-
+	}
 });
 	$(document).ready(function() {
 		$('#dataTables-example').DataTable({
@@ -250,7 +264,7 @@ $(document).on("click", "[data-delete-id]", function(e) {
 					$("#"+div_name).html(data);
 						var objDiv = document.getElementById(div_name);
 						objDiv.scrollTop = objDiv.scrollHeight;
-					alertify.success('Выполнено'); return;
+					alertify.success('Обновлено'); return;
 				}
 		});
 	});

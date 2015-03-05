@@ -25,6 +25,7 @@ const (
 type Foo struct {
 	Name	string	`json:"name"`
 	Size	int64	`json:"size"`
+	Time	string	`json:"time"`
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -77,7 +78,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-			if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update" || CMD == "gotv" || CMD == "delete"){
+			//if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update" || CMD == "gotv" || CMD == "delete" || CMD == "cnf"){
+			//	fmt.Fprintf(w, "Wrong cmd")
+			//	return
+			//}
+			
+			is_stop_start_restart := map[string]bool { 
+				"restart": true, "start": true, "stop": true, "log": true, "update": true, "gotv": true, "delete": true, "cnf": true,
+			}
+			if !is_stop_start_restart[CMD] {
 				fmt.Fprintf(w, "Wrong cmd")
 				return
 			}
@@ -113,6 +122,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, string(out))
 			}
 			
+			if(CMD == "cnf"){
+				out, err := ioutil.ReadFile("/home/"+USER+"/serverfiles/csgo/cfg/csgo-server.cfg")
+				if err != nil {
+					fmt.Fprintf(w, "error")
+					return
+				}
+				fmt.Fprintf(w, string(out))
+			}
+			
 			if(CMD == "gotv"){
 			var i int
 			datas := make(map[string]Foo)
@@ -125,7 +143,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					
-					datas[fmt.Sprint(i)] = Foo{Name: f.Name(), Size: file.Size()}
+					datas[fmt.Sprint(i)] = Foo{Name: f.Name(), Size: file.Size(), Time: file.ModTime().Format("2006-01-02 15:04:05")}
 					i++
 				}
 			j, _ := json.Marshal(datas)
