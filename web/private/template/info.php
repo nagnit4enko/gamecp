@@ -42,6 +42,19 @@
 		</div>
 	</div>
 </div>
+<div id="myModal2" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div id="modal_info" class="modal-body">
+				Вы уверены?
+			</div>
+			<div class="modal-footer">
+			<button type="button" data-dismiss="modal" class="btn btn-primary" id="delete">Delete</button>
+			<button type="button" data-dismiss="modal" class="btn btn-primary">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
 <div id="wrapper">
 	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 		<div class="navbar-header">
@@ -166,26 +179,26 @@
 <script src="/js/sb-admin-2.js"></script>
 <script src="/js/alertify.min.js"></script>
 <script>
-$(document).on("click", "[data-delete-id]", function(e) {
-	e.preventDefault();
-	var table = $('#dataTables-example').dataTable();
-	var ask = confirm("Вы уверены что хотите удалить демо?");
-	tr_id = $(this).data("delete-id");
-	if(ask == false) {
-		return;
-	} else {
-		$.post("http://"+document.domain+"/public/cmd.php", { command: 'delete', user: $(this).data("server-name"), file: $(this).data("demo-name")}, function( data ){
-			$('#myModal').modal('hide');
-			if(data == 'OK'){
-				table.fnDeleteRow(table.$("#"+tr_id));
-				alertify.success('Демо удалено');
-				return;
-			} else {
-				alertify.error('Ошибка'); return;
-			}
+	$(document).on("click", "[data-delete-id]", function(e) {
+		e.preventDefault();
+		var table = $('#dataTables-example').dataTable();
+		tr_id = $(this).data("delete-id");
+		user = $(this).data("server-name");
+		file = $(this).data("demo-name");
+		$('#myModal2').modal('show')
+		.one('click', '#delete', function (e) {
+			$.post("http://"+document.domain+"/public/cmd.php", { command: 'delete', user: user, file: file}, function( data ){
+				if(data == 'OK'){
+					table.fnDeleteRow(table.$("#"+tr_id));
+					alertify.success('Запись игры удалена');
+					return;
+				} else {
+					alertify.error('Ошибка'); return;
+				}
+			});
+		});
 	});
-	}
-});
+
 	$(document).ready(function() {
 		$('#dataTables-example').DataTable({
 			stateSave: true
