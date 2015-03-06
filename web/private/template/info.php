@@ -177,7 +177,7 @@
 						<!--<textarea class="form-control" type="text" style="width:100%;height:550px;overflow:auto;resize:vertical;"><? echo $server_cnf; ?></textarea><br/>-->
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Название</span>
-							<input id="server_name" type="text" class="form-control" placeholder="R3KT Server" value="<? echo $server['name']; ?>" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_name" type="text" class="form-control" placeholder="Lepus Server" value="<? echo $server['name']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Пароль</span>
@@ -185,7 +185,7 @@
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">RCON</span>
-							<input id="server_rcon" type="text" class="form-control" placeholder="14233" value="<? echo $server['rcon']; ?>" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_rcon" type="text" class="form-control" placeholder="123" value="<? echo $server['rcon']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div></p>
 						<input data-server-cnf="<? echo $server_name; ?>" type="submit" class="btn btn-success" value="Сохранить">
 					</div>

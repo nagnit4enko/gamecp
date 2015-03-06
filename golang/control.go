@@ -14,6 +14,7 @@ var COMMAND string
 var USER string
 var FILE string
 var CMD string
+var pass string
 
 const (
     PORT		= ":8081"
@@ -78,13 +79,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-			//if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update" || CMD == "gotv" || CMD == "delete" || CMD == "cnf"){
+			//if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update-restart" || CMD == "gotv" || CMD == "delete" || CMD == "cnf"){
 			//	fmt.Fprintf(w, "Wrong cmd")
 			//	return
 			//}
 			
 			is_stop_start_restart := map[string]bool { 
-				"restart": true, "start": true, "stop": true, "log": true, "update": true, "gotv": true, "delete": true, "cnf": true,
+				"restart": true, "start": true, "stop": true, "log": true, "update-restart": true, "gotv": true, "delete": true, "cnf": true,
 			}
 			if !is_stop_start_restart[CMD] {
 				fmt.Fprintf(w, "Wrong cmd")
@@ -122,13 +123,35 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, string(out))
 			}
 			
-			if(CMD == "cnf"){
-				out, err := ioutil.ReadFile("/home/"+USER+"/serverfiles/csgo/cfg/csgo-server.cfg")
-				if err != nil {
-					fmt.Fprintf(w, "error")
+			// if(CMD == "cnf"){
+				// out, err := ioutil.ReadFile("/home/"+USER+"/serverfiles/csgo/cfg/csgo-server.cfg")
+				// if err != nil {
+					// fmt.Fprintf(w, "error")
+					// return
+				// }
+				// fmt.Fprintf(w, string(out))
+			// }
+			
+			if (CMD == "cnf") {
+				pass = r.URL.Query().Get("pass")
+				if len(pass) == 0 {
+					fmt.Fprintf(w, "No pass")
 					return
 				}
-				fmt.Fprintf(w, string(out))
+				dir := "/home/"+USER+"/serverfiles/csgo/cfg/csgo-server.cfg"
+				input, err := ioutil.ReadFile(dir)
+				lines := strings.Split(string(input), "\n")
+				for i, line := range lines {
+					if strings.Contains(line, "sv_password") {
+						lines[i] = "sv_password"+pass
+					}
+				}
+				output := strings.Join(lines, "\n")
+				err = ioutil.WriteFile(dir, []byte(output), 0644)
+				if err != nil {
+					fmt.Fprintf(w, "error")
+				}
+				
 			}
 			
 			if(CMD == "gotv"){

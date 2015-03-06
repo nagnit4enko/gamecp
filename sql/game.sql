@@ -14,7 +14,8 @@ ALTER TABLE `users`
   `name` varchar(128) NOT NULL,
   `user_id` int(11) NOT NULL,
   `ip` varchar(128) NOT NULL,
-  `port` int(11) NOT NULL
+  `port` int(11) NOT NULL,
+  `settings` varchar(256) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 

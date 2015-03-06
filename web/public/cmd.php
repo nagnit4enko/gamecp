@@ -22,7 +22,7 @@ if(!$row["accsess"]) die("error");
 
 if($_POST['command'] == 'cnf'){
 	if(empty($_POST['name']) || empty($_POST['pass']) || empty($_POST['rcon'])) die('empty');
-	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['name'])) die('er_name');
+	if(preg_match('/[^0-9a-zA-Z_. -]/', $_POST['name'])) die('er_name');
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['pass'])) die('er_pass');
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['rcon'])) die('er_rcon');
 	
@@ -30,4 +30,4 @@ if($_POST['command'] == 'cnf'){
 }
 	
 
-//echo curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$_POST['user']}&cmd={$_POST['command']}", NULL);
+echo curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$_POST['user']}&cmd={$_POST['command']}&pass={$_POST['pass']}", NULL);
