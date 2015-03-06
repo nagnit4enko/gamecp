@@ -79,7 +79,8 @@ function csgo_info($ip, $port){
 	
 	$Query = new SourceQuery();
 	$Query->Connect( SQ_SERVER_ADDR, SQ_SERVER_PORT, SQ_TIMEOUT, SQ_ENGINE );
-	$i = $Query->GetInfo();
+	//$i = ["info" => $Query->GetInfo(), "players" => $Query->GetPlayers()];
+	$i = ["info" => $Query->GetInfo()];
 	$Query->Disconnect();
 	return $i;
 }

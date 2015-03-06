@@ -11,7 +11,7 @@
 	$menu = get_servers();
 	
 	$server_demo = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=gotv", NULL);
-	$demo_arr = json_decode($server_demo, true);	
+	$demo_arr = json_decode($server_demo, true);
  ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,7 +59,7 @@
 	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="sr-only">Toggle navigation</span>
+				<span class="sr-only">Навигация</span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
@@ -92,7 +92,13 @@
 	<div id="page-wrapper">
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header"><? echo strip_tags($server_info['HostName']); ?>	
+				<h1 class="page-header">
+				<?
+				if(!empty($server_info['info']['ModDir'])) echo '<img src="img/online.png" alt="online">';
+					else echo '<img src="img/offline.png" alt="offline">';
+				echo strip_tags($server_info['info']['HostName']);
+				?>
+				
 				<!--<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Включить">
 				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Выключить"> -->
 				<input data-server-restart="<? echo $server_name; ?>" type="submit" class="btn btn-danger" value="Перезагрузить">
@@ -103,9 +109,8 @@
 		<div role="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
 				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">О сервере</a></li>
-				<li role="presentation"><a href="#players" aria-controls="players" role="tab" data-toggle="tab">Игроки</a></li>
+				<li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Настройки</a></li>
 				<li role="presentation"><a href="#gotv" aria-controls="gotv" role="tab" data-toggle="tab">Демо</a></li>
-				<li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Настройка</a></li>
 				<li role="presentation"><a href="#console" aria-controls="console" role="tab" data-toggle="tab">Консоль</a></li>
 			</ul>
 			<div class="tab-content">
@@ -113,7 +118,7 @@
 					<div class="panel-body">
 <!-- 						<div class="panel panel-default">
 							<ul class="list-group">
-								<li class="list-group-item">Игра: <? echo strip_tags($server_info['ModDesc']); ?></li>
+								<li class="list-group-item">Игра: <? echo strip_tags($server_info['info']['ModDesc']); ?></li>
 								<li class="list-group-item">123</li>
 								<li class="list-group-item">123</li>
 								<li class="list-group-item">123</li>
@@ -124,41 +129,41 @@
 						
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Игра</span>
-							<span class="form-control" style="width:228px" aria-describedby="basic-addon1">CS:GO</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['ModDesc']); ?></span>
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">IP</span>
-							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server['port']}"; ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['info']['GamePort']}"; ?></span>
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">GOTV</span>
-							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['SpecPort']}"; ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['info']['SpecPort']}"; ?></span>
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Карта</span>
-							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['Map']); ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['Map']); ?></span>
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Онлайн</span>
-							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo intval($server_info['Players'])."/".intval($server_info['MaxPlayers']); ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo intval($server_info['info']['Players'])."/".intval($server_info['info']['MaxPlayers']); ?></span>
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">VAC</span>
-							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo strip_tags(($server_info['Secure'] ? true : false) ? 'включен' : 'выключен'); ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags(($server_info['info']['Secure'] ? true : false) ? 'включен' : 'выключен'); ?></span>
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Версия</span>
-							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['Version']); ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['Version']); ?></span>
 						</div></p>
 						
 						
-<!-- 					Игра: <? echo strip_tags($server_info['ModDesc']); ?><br/>
-						IP: <? echo "{$server['ip']}:{$server['port']}"; ?> <br/>
+<!-- 					Игра: <? echo strip_tags($server_info['info']['ModDesc']); ?><br/>
+						IP: <? echo "{$server['ip']}:{$server_info['info']['GamePort']}"; ?> <br/>
 						GOTV: <? echo "{$server['ip']}:{$server_info['SpecPort']}"; ?> <br/>
-						Карта: <? echo strip_tags($server_info['Map']); ?><br/>
-						Онлайн: <? echo intval($server_info['Players'])."/".intval($server_info['MaxPlayers']); ?><br/>
-						VAC: <? echo strip_tags(($server_info['Secure'] ? true : false) ? 'включен' : 'выключен'); ?><br/>
-						Версия: <? echo strip_tags($server_info['Version']); ?><br/> -->
+						Карта: <? echo strip_tags($server_info['info']['Map']); ?><br/>
+						Онлайн: <? echo intval($server_info['info']['Players'])."/".intval($server_info['info']['MaxPlayers']); ?><br/>
+						VAC: <? echo strip_tags(($server_info['info']['Secure'] ? true : false) ? 'включен' : 'выключен'); ?><br/>
+						Версия: <? echo strip_tags($server_info['info']['Version']); ?><br/> -->
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="console">
@@ -172,15 +177,15 @@
 						<!--<textarea class="form-control" type="text" style="width:100%;height:550px;overflow:auto;resize:vertical;"><? echo $server_cnf; ?></textarea><br/>-->
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Название</span>
-							<input type="text" class="form-control" placeholder="R3KT Server" style="width:228px" aria-describedby="basic-addon1">
+							<input type="text" class="form-control" placeholder="R3KT Server" style="width:238px" aria-describedby="basic-addon1">
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Пароль</span>
-							<input type="text" class="form-control" placeholder="pcw" style="width:228px" aria-describedby="basic-addon1">
+							<input type="text" class="form-control" placeholder="pcw" style="width:238px" aria-describedby="basic-addon1">
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">RCON</span>
-							<input type="text" class="form-control" placeholder="14233" style="width:228px" aria-describedby="basic-addon1">
+							<input type="text" class="form-control" placeholder="14233" style="width:238px" aria-describedby="basic-addon1">
 						</div></p>
 						<input type="submit" class="btn btn-success" value="Сохранить">
 					</div>
@@ -209,37 +214,6 @@
 									echo "<td><center>".bytesToSize1000(intval($val['size']))."</center></td>";
 									echo "<td><center><a href=\"".nginx_link($server_name, strip_tags($val['name']))."\" title=\"Скачать\"><i class=\"fa fa-download fa-fw\"></i></a></center></td>";
 									echo "<td><center><a data-delete-id=\"$tr\" data-server-name=\"$server_name\" data-demo-name=\"".strip_tags($val['name'])."\" href=\"#\" title=\"Удалить\"><i class=\"glyphicon glyphicon-remove\"></i></a></center></td>";
-									echo "</tr>";
-									$tr++;
-								}
-								?>
-								</tbody>
-							</table>
-						</div>
-					</div> 
-				</div>
-				<div role="tabpanel" class="tab-pane fade" id="players">
-					<div class="panel-body">
-						<div class="dataTable_wrapper">
-							<table class="table table-striped table-bordered table-hover" id="dataTables-example">
-								<thead>
-									<tr>
-										<th style="text-align: center;">ID</th>
-										<th style="text-align: center;">Никнейм</th>
-										<th style="text-align: center;">Убийства</th>
-										<th style="text-align: center;">Время</th>
-									</tr>
-								</thead>
-								<tbody>
-								<?
-								$tr = 0;
-								foreach ($demo_arr as $val) {
-									if(empty($val)) continue;
-									echo "<tr id=\"$tr\">";
-									echo "<td><center>...</center></td>";
-									echo "<td><center>...</center></td>";
-									echo "<td><center>...</center></td>";
-									echo "<td><center>...</center></td>";
 									echo "</tr>";
 									$tr++;
 								}
@@ -339,7 +313,7 @@
 		$(this).blur();
 		$('#myModal').modal('show');
 		$("#modal_info").html("<center>Специально обученная обезьяна обновляет ваш сервер.</center>");
-		$.post("http://"+document.domain+"/public/cmd.php", {command: 'update', user: $(this).data("server-update")}, function( data ){
+		$.post("http://"+document.domain+"/public/cmd.php", {command: 'update-restart', user: $(this).data("server-update")}, function( data ){
 				$('#myModal').modal('hide');
 				if(data == 'OK'){
 					alertify.success('Выполнено'); return;

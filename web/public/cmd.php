@@ -7,7 +7,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/private/auth.php');
 if(empty($_POST['command']) || empty($_POST['user'])) die('empty');
 if(preg_match('/[^0-9a-z]/', $_POST['user'])) die('er_user');
 
-$commands = ["restart", "stop", "start", "log", "update", "delete", "cnf"];
+$commands = ["restart", "stop", "start", "log", "update-restart", "delete", "cnf"];
 if (!in_array($_POST['command'], $commands)) die('er_command');
 
 if($_POST['command'] == 'delete'){
