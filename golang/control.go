@@ -143,7 +143,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					
-					datas[fmt.Sprint(i)] = Foo{Name: f.Name(), Size: file.Size(), Time: file.ModTime().Format("2006-01-02 15:04:05")}
+					datas[fmt.Sprint(i)] = Foo{Name: f.Name(), Size: file.Size(), Time: file.ModTime().Format("02.01.2006 15:04:05")}
 					i++
 				}
 			j, _ := json.Marshal(datas)

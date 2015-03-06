@@ -49,8 +49,8 @@
 				Вы уверены?
 			</div>
 			<div class="modal-footer">
-			<button type="button" data-dismiss="modal" class="btn btn-primary" id="delete">Delete</button>
-			<button type="button" data-dismiss="modal" class="btn btn-primary">Cancel</button>
+			<button type="button" data-dismiss="modal" class="btn btn-primary" id="delete">Удалить</button>
+			<button type="button" data-dismiss="modal" class="btn btn-primary">Отмена</button>
 			</div>
 		</div>
 	</div>
@@ -102,35 +102,87 @@
 		</div>
 		<div role="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Информация</a></li>
-				<li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Конфигурация</a></li>
+				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">О сервере</a></li>
+				<li role="presentation"><a href="#players" aria-controls="players" role="tab" data-toggle="tab">Игроки</a></li>
 				<li role="presentation"><a href="#gotv" aria-controls="gotv" role="tab" data-toggle="tab">Демо</a></li>
+				<li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Настройка</a></li>
 				<li role="presentation"><a href="#console" aria-controls="console" role="tab" data-toggle="tab">Консоль</a></li>
 			</ul>
 			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane fade in active" id="info">
+				<div role="tabpanel" class="tab-pane fade in active" id="info" style="width:412px">
 					<div class="panel-body">
-					Игра: <? echo strip_tags($server_info['ModDesc']); ?><br/>
-					IP: <? echo "{$server['ip']}:{$server['port']}"; ?> <br/>
-					GOTV: <? echo "{$server['ip']}:{$server_info['SpecPort']}"; ?> <br/>
-					Карта: <? echo strip_tags($server_info['Map']); ?><br/>
-					Онлайн: <? echo intval($server_info['Players'])."/".intval($server_info['MaxPlayers']); ?><br/>
-					Пароль: <? echo strip_tags(($server_info['Password'] ? true : false) ? 'есть' : 'нет'); ?><br/>
-					VAC: <? echo strip_tags(($server_info['Secure'] ? true : false) ? 'включен' : 'отключен'); ?><br/>
-					Версия: <? echo strip_tags($server_info['Version']); ?><br/>
+<!-- 						<div class="panel panel-default">
+							<ul class="list-group">
+								<li class="list-group-item">Игра: <? echo strip_tags($server_info['ModDesc']); ?></li>
+								<li class="list-group-item">123</li>
+								<li class="list-group-item">123</li>
+								<li class="list-group-item">123</li>
+								<li class="list-group-item">123</li>
+							</ul>
+						</div> -->
+						
+						
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Игра</span>
+							<span class="form-control" style="width:228px" aria-describedby="basic-addon1">CS:GO</span>
+						</div>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">IP</span>
+							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server['port']}"; ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">GOTV</span>
+							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['SpecPort']}"; ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Карта</span>
+							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['Map']); ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Онлайн</span>
+							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo intval($server_info['Players'])."/".intval($server_info['MaxPlayers']); ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">VAC</span>
+							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo strip_tags(($server_info['Secure'] ? true : false) ? 'включен' : 'выключен'); ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Версия</span>
+							<span class="form-control" style="width:228px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['Version']); ?></span>
+						</div></p>
+						
+						
+<!-- 					Игра: <? echo strip_tags($server_info['ModDesc']); ?><br/>
+						IP: <? echo "{$server['ip']}:{$server['port']}"; ?> <br/>
+						GOTV: <? echo "{$server['ip']}:{$server_info['SpecPort']}"; ?> <br/>
+						Карта: <? echo strip_tags($server_info['Map']); ?><br/>
+						Онлайн: <? echo intval($server_info['Players'])."/".intval($server_info['MaxPlayers']); ?><br/>
+						VAC: <? echo strip_tags(($server_info['Secure'] ? true : false) ? 'включен' : 'выключен'); ?><br/>
+						Версия: <? echo strip_tags($server_info['Version']); ?><br/> -->
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="console">
 					<div class="panel-body">
 						<pre id="log_<? echo $server_name; ?>" style="max-height:580px;overflow:auto;"> <? echo $server_log; ?> </pre>
-						<center><input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-primary" style="width: 30%;" value="Обновить"></center>
+						<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить">
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="config">
 					<div class="panel-body">
-						<textarea class="form-control" type="text" style="width:100%;height:550px;overflow:auto;resize:vertical;"><? echo $server_cnf; ?></textarea><br/>
-						<input type="submit" class="btn btn-info" style="width: 49%;" value="Обновить">
-						<input type="submit" class="btn btn-info" style="width: 49%;" value="Сохранить">
+						<!--<textarea class="form-control" type="text" style="width:100%;height:550px;overflow:auto;resize:vertical;"><? echo $server_cnf; ?></textarea><br/>-->
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Название</span>
+							<input type="text" class="form-control" placeholder="R3KT Server" style="width:228px" aria-describedby="basic-addon1">
+						</div>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Пароль</span>
+							<input type="text" class="form-control" placeholder="pcw" style="width:228px" aria-describedby="basic-addon1">
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">RCON</span>
+							<input type="text" class="form-control" placeholder="14233" style="width:228px" aria-describedby="basic-addon1">
+						</div></p>
+						<input type="submit" class="btn btn-success" value="Сохранить">
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">
@@ -157,6 +209,37 @@
 									echo "<td><center>".bytesToSize1000(intval($val['size']))."</center></td>";
 									echo "<td><center><a href=\"".nginx_link($server_name, strip_tags($val['name']))."\" title=\"Скачать\"><i class=\"fa fa-download fa-fw\"></i></a></center></td>";
 									echo "<td><center><a data-delete-id=\"$tr\" data-server-name=\"$server_name\" data-demo-name=\"".strip_tags($val['name'])."\" href=\"#\" title=\"Удалить\"><i class=\"glyphicon glyphicon-remove\"></i></a></center></td>";
+									echo "</tr>";
+									$tr++;
+								}
+								?>
+								</tbody>
+							</table>
+						</div>
+					</div> 
+				</div>
+				<div role="tabpanel" class="tab-pane fade" id="players">
+					<div class="panel-body">
+						<div class="dataTable_wrapper">
+							<table class="table table-striped table-bordered table-hover" id="dataTables-example">
+								<thead>
+									<tr>
+										<th style="text-align: center;">ID</th>
+										<th style="text-align: center;">Никнейм</th>
+										<th style="text-align: center;">Убийства</th>
+										<th style="text-align: center;">Время</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?
+								$tr = 0;
+								foreach ($demo_arr as $val) {
+									if(empty($val)) continue;
+									echo "<tr id=\"$tr\">";
+									echo "<td><center>...</center></td>";
+									echo "<td><center>...</center></td>";
+									echo "<td><center>...</center></td>";
+									echo "<td><center>...</center></td>";
 									echo "</tr>";
 									$tr++;
 								}

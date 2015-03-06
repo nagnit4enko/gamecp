@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Контрольная панель</title>
+    <title>Панель управления</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/metisMenu.min.css" rel="stylesheet">
     <link href="/css/dataTables.bootstrap.css" rel="stylesheet">
@@ -18,16 +18,6 @@
 	<link href="/css/alertify.bootstrap.css" rel="stylesheet">
 </head>
 <body>
-<div id="myModal" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<center><h4 class="modal-title">Пожалуйста, подождите.</h4></center>
-			</div>
-			<div id="modal_info" class="modal-body"></div>
-		</div>
-	</div>
-</div>
 <div id="wrapper">
 	<!-- Navigation -->
 	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -38,7 +28,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/">Контрольная панель</a>
+			<a class="navbar-brand" href="/">Панель управления</a>
 		</div>
 			<!-- /.navbar-header -->
 		<ul class="nav navbar-top-links navbar-right">
@@ -58,10 +48,10 @@
 			<div class="sidebar-nav navbar-collapse">
 				<ul class="nav" id="side-menu">
 					<li><a href="/index.php?do=default"><i class="fa fa-newspaper-o fa-fw"></i> Новости</a></li>
-						<li>
-							<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>
-							<ul class="nav nav-second-level"><? echo $menu; ?></ul>
-						</li>
+					<li>
+						<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>
+						<ul class="nav nav-second-level"><? echo $menu; ?></ul>
+					</li>
 				</ul>
 			</div>
 		</div>
