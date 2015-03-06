@@ -1,4 +1,14 @@
 <?
+function update_settings($name, $pass, $rcon, $server){
+		global $db;
+		$arr = ["name" => $name, "passwd" => $pass, "rcon" => $rcon];
+		$query = $db->prepare("UPDATE `servers` SET `settings` = :settings WHERE `name` = :server");
+		$query->bindParam(':settings', json_encode($arr), PDO::PARAM_STR);
+		$query->bindParam(':server', $server, PDO::PARAM_STR);
+		$query->execute();
+		return 'OK';
+}
+
 function nginx_link($server, $file){
 	global $user;
 	$domain = 'http://game.lepus.su';
@@ -67,7 +77,12 @@ function get_access($name){
 function server_info($name){
 	$row = get_access($name);
 	if(!$row["accsess"]) die("no_accsess");
-	$i = ["ip" => $row['data']['ip'], "port" => $row['data']['port']];
+	if(!empty($row['data']['settings'])){
+		$j = json_decode($row['data']['settings'], true);
+	}else{
+		$j = ["name" => NULL, "passwd" => NULL, "rcon" => NULL];
+	}
+	$i = ["ip" => $row['data']['ip'], "port" => $row['data']['port'], "name" => $j['name'], "passwd" => $j['passwd'], "rcon" => $j['rcon']];
 	return $i;
 }
 

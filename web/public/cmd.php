@@ -16,7 +16,18 @@ if($_POST['command'] == 'delete'){
 	$_POST['command'] = $_POST['command']."&file=".$_POST['file'];
 }
 
+
 $row = get_access($_POST['user']);
 if(!$row["accsess"]) die("error");
+
+if($_POST['command'] == 'cnf'){
+	if(empty($_POST['name']) || empty($_POST['pass']) || empty($_POST['rcon'])) die('empty');
+	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['name'])) die('er_name');
+	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['pass'])) die('er_pass');
+	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['rcon'])) die('er_rcon');
 	
-echo curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$_POST['user']}&cmd={$_POST['command']}", NULL);
+	if(update_settings($_POST['name'], $_POST['pass'], $_POST['rcon'], $_POST['user']) == 'OK') echo 'OK';
+}
+	
+
+//echo curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$_POST['user']}&cmd={$_POST['command']}", NULL);

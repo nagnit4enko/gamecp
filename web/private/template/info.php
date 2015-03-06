@@ -177,17 +177,17 @@
 						<!--<textarea class="form-control" type="text" style="width:100%;height:550px;overflow:auto;resize:vertical;"><? echo $server_cnf; ?></textarea><br/>-->
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Название</span>
-							<input type="text" class="form-control" placeholder="R3KT Server" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_name" type="text" class="form-control" placeholder="R3KT Server" value="<? echo $server['name']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Пароль</span>
-							<input type="text" class="form-control" placeholder="pcw" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_pass" type="text" class="form-control" placeholder="pcw" value="<? echo $server['passwd']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">RCON</span>
-							<input type="text" class="form-control" placeholder="14233" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_rcon" type="text" class="form-control" placeholder="14233" value="<? echo $server['rcon']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div></p>
-						<input type="submit" class="btn btn-success" value="Сохранить">
+						<input data-server-cnf="<? echo $server_name; ?>" type="submit" class="btn btn-success" value="Сохранить">
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">
@@ -236,6 +236,20 @@
 <script src="/js/sb-admin-2.js"></script>
 <script src="/js/alertify.min.js"></script>
 <script>
+	$(document).on("click", "[data-server-cnf]", function(e) {
+		$(this).blur();
+		server_name = $('input[id=server_name]').val();
+		server_pass = $('input[id=server_pass]').val();
+		server_rcon = $('input[id=server_rcon]').val();
+		$.post("http://"+document.domain+"/public/cmd.php", {command: 'cnf', user: $(this).data("server-cnf"), name: server_name, pass: server_pass, rcon: server_rcon}, function( data ){
+				if(data == 'OK'){
+					alertify.success('Выполнено'); return;
+				} else {
+					alertify.error(data); return;
+				}
+		});
+	});
+	
 	$(document).on("click", "[data-delete-id]", function(e) {
 		e.preventDefault();
 		var table = $('#dataTables-example').dataTable();
