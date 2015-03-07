@@ -94,9 +94,9 @@
 			<div class="col-lg-12">
 				<h1 class="page-header">
 				<?
-				if(!empty($server_info['info']['ModDir'])) echo '<img src="img/online.png" alt="online">';
-					else echo '<img src="img/offline.png" alt="offline">';
-				echo strip_tags($server_info['info']['HostName']);
+				if(!empty($server_info['info']['ModDir'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> ';
+					else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
+				echo "<lu id=\"sname\">".strip_tags($server_info['info']['HostName'])."</lu>";
 				?>
 				&nbsp;
 				<!--<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Включить">
@@ -238,12 +238,17 @@
 <script>
 	$(document).on("click", "[data-server-cnf]", function(e) {
 		$(this).blur();
+		$('#myModal').modal('show');
+		$("#modal_info").html("<center>Специально обученная обезьяна меняет настройки и перезагружает ваш сервер.</center>");
 		server_name = $('input[id=server_name]').val();
 		server_pass = $('input[id=server_pass]').val();
 		server_rcon = $('input[id=server_rcon]').val();
 		$.post("http://"+document.domain+"/public/cmd.php", {command: 'cnf', user: $(this).data("server-cnf"), name: server_name, pass: server_pass, rcon: server_rcon}, function( data ){
+				$('#myModal').modal('hide');
 				if(data == 'OK'){
-					alertify.success('Выполнено'); return;
+					$("#sname").html(server_name);
+					alertify.success('Выполнено'); 
+					return;
 				} else {
 					alertify.error(data); return;
 				}

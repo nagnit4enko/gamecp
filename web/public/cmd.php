@@ -21,7 +21,7 @@ if(!$row["accsess"]) die("error");
 
 if($_POST['command'] == 'cnf'){
 	if(empty($_POST['name']) || empty($_POST['pass']) || empty($_POST['rcon'])) die('empty');
-	if(preg_match('/[^0-9a-zA-Z_. -]/', $_POST['name'])) die('er_name');
+	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['name'])) die('er_name');
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['pass'])) die('er_pass');
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['rcon'])) die('er_rcon');
 	if(update_settings($_POST['name'], $_POST['pass'], $_POST['rcon'], $_POST['user']) == 'OK'){
