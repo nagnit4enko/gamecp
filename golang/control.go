@@ -14,7 +14,9 @@ var COMMAND string
 var USER string
 var FILE string
 var CMD string
-var pass string
+var SERVER_NAME string
+var SERVER_PASSWD string
+var SERVER_RCON string
 
 const (
     PORT		= ":8081"
@@ -79,11 +81,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
-			//if!(CMD == "restart" || CMD == "start" || CMD == "stop" || CMD == "log" || CMD == "update-restart" || CMD == "gotv" || CMD == "delete" || CMD == "cnf"){
-			//	fmt.Fprintf(w, "Wrong cmd")
-			//	return
-			//}
-			
 			is_stop_start_restart := map[string]bool { 
 				"restart": true, "start": true, "stop": true, "log": true, "update-restart": true, "gotv": true, "delete": true, "cnf": true,
 			}
@@ -123,35 +120,65 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, string(out))
 			}
 			
-			// if(CMD == "cnf"){
-				// out, err := ioutil.ReadFile("/home/"+USER+"/serverfiles/csgo/cfg/csgo-server.cfg")
-				// if err != nil {
-					// fmt.Fprintf(w, "error")
-					// return
-				// }
-				// fmt.Fprintf(w, string(out))
-			// }
-			
 			if (CMD == "cnf") {
-				pass = r.URL.Query().Get("pass")
-				if len(pass) == 0 {
-					fmt.Fprintf(w, "No pass")
+				SERVER_NAME = r.URL.Query().Get("server_name")
+				SERVER_PASSWD = r.URL.Query().Get("server_passwd")
+				SERVER_RCON = r.URL.Query().Get("server_rcon")
+				re := regexp.MustCompile("^[a-zA-Z0-9_.-]*$")
+				
+				// Проверка на пустоту
+				if len(SERVER_NAME) == 0 {
+					fmt.Fprintf(w, "empty server name")
 					return
 				}
-				dir := "/home/"+USER+"/serverfiles/csgo/cfg/csgo-server.cfg"
-				input, err := ioutil.ReadFile(dir)
-				lines := strings.Split(string(input), "\n")
+				if len(SERVER_PASSWD) == 0 {
+					fmt.Fprintf(w, "empty server passwd")
+					return
+				}
+				if len(SERVER_RCON) == 0 {
+					fmt.Fprintf(w, "empty server rcon")
+					return
+				}
+				
+				// Проверка на допустимые символы
+				if(re.MatchString(SERVER_NAME) == false){
+					fmt.Fprintf(w, "wrong server name")
+					return
+				}
+				if(re.MatchString(SERVER_PASSWD) == false){
+					fmt.Fprintf(w, "wrong server name")
+					return
+				}
+				if(re.MatchString(SERVER_RCON) == false){
+					fmt.Fprintf(w, "wrong server name")
+					return
+				}
+				
+				out, err := ioutil.ReadFile("/home/"+USER+"/serverfiles/csgo/cfg/csgo-server.cfg")
+				if err != nil {
+					fmt.Fprintf(w, "error")
+					return
+				}
+				
+				lines := strings.Split(string(out), "\n")
 				for i, line := range lines {
+					if strings.Contains(line, "hostname") {
+						lines[i] = `hostname "`+SERVER_NAME+`"`
+					}
 					if strings.Contains(line, "sv_password") {
-						lines[i] = "sv_password"+pass
+						lines[i] = `sv_password "`+SERVER_PASSWD+`"`
+					}
+					if strings.Contains(line, "rcon_password") {
+						lines[i] = `rcon_password "`+SERVER_RCON+`"`
 					}
 				}
 				output := strings.Join(lines, "\n")
-				err = ioutil.WriteFile(dir, []byte(output), 0644)
+				err = ioutil.WriteFile("/home/"+USER+"/serverfiles/csgo/cfg/csgo-server.cfg", []byte(output), 0644)
 				if err != nil {
 					fmt.Fprintf(w, "error")
 				}
-				
+				fmt.Fprintf(w, "OK")
+				return
 			}
 			
 			if(CMD == "gotv"){

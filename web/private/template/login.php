@@ -17,7 +17,9 @@
 <body>
 <div class="container">
 	<div class="row">
-		<div class="col-md-4 col-md-offset-4 text-center" style="margin-top: 40px;margin-bottom: -55px;"></div>
+		<div class="col-md-4 col-md-offset-4 text-center" style="margin-top: 40px;margin-bottom: -55px;">
+		<a href="/"><img src="/img/logo-game.png"></a>
+		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4">
