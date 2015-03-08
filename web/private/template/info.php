@@ -30,6 +30,8 @@
     <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	<link href="/css/alertify.core.css" rel="stylesheet">
 	<link href="/css/alertify.bootstrap.css" rel="stylesheet">
+	<link href="/css/bootstrap-switch.css" rel="stylesheet">
+	<link href="/css/bootstrap-select.css" rel="stylesheet">
 </head>
 <body>
 <div id="myModal" class="modal fade">
@@ -70,40 +72,43 @@
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i></a>
 				<ul class="dropdown-menu dropdown-user">
-					<li><a href="/?do=settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
+					<li><a href="#settings" aria-controls="settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
 					<li class="divider"></li>
 					<li><a href="/?do=exit"><i class="fa fa-sign-out fa-fw"></i> Выход</a></li>
 				</ul>
 			</li>
-		</ul>
-		
+		</ul>		
 		<div class="navbar-default sidebar" role="navigation">
 			<div class="sidebar-nav navbar-collapse">
 				<ul class="nav" id="side-menu">
 					<li><a href="/index.php?do=default"><i class="fa fa-newspaper-o fa-fw"></i> Новости</a></li>
-						<li>
-                            <a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level"><? echo $menu; ?></ul>
-						</li>
-					</ul>
+					<li>
+						<?
+						if($menu[1] > 1) echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>';
+							else echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервер<span class="fa arrow"></span></a>';
+						?>
+						<ul class="nav nav-second-level"><? echo $menu[0]; ?></ul>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</nav>
 	<div id="page-wrapper">
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header">
+				<h2 class="page-header">
 				<?
-				if(!empty($server_info['info']['ModDir'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> ';
+				if(isset($server_info['info']['HostName'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> ';
 					else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
-				echo "<lu id=\"sname\">".strip_tags($server_info['info']['HostName'])."</lu>";
+				if(isset($server_info['info']['HostName'])) echo "<lu id=\"sname\">".strip_tags($server_info['info']['HostName'])."</lu>";
+					else echo "<lu id=\"sname\">".strip_tags($server['name'])."</lu>";
 				?>
 				&nbsp;
 				<!--<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Включить">
 				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Выключить">-->
 				<input data-server-restart="<? echo $server_name; ?>" type="submit" class="btn btn-danger" value="Перезагрузить">
 				<input data-server-update="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить сервер">
-				</h1>
+				</h2>
 			</div>
 		</div>
 		<div role="tabpanel">
@@ -115,21 +120,15 @@
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane fade in active" id="info" style="width:412px">
-					<div class="panel-body">
-<!-- 						<div class="panel panel-default">
-							<ul class="list-group">
-								<li class="list-group-item">Игра: <? echo strip_tags($server_info['info']['ModDesc']); ?></li>
-								<li class="list-group-item">123</li>
-								<li class="list-group-item">123</li>
-								<li class="list-group-item">123</li>
-								<li class="list-group-item">123</li>
-							</ul>
-						</div> -->
-						
-						
+					<div class="panel-body">		
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Игра</span>
-							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['ModDesc']); ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1">
+							<?
+							if(isset($server_info['info']['ModDesc'])) echo $server_info['info']['ModDesc'];
+								else echo "сервер выключен";
+							?>
+							</span>
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">IP</span>
@@ -155,15 +154,6 @@
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Версия</span>
 							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['Version']); ?></span>
 						</div></p>
-						
-						
-<!-- 					Игра: <? echo strip_tags($server_info['info']['ModDesc']); ?><br/>
-						IP: <? echo "{$server['ip']}:{$server_info['info']['GamePort']}"; ?> <br/>
-						GOTV: <? echo "{$server['ip']}:{$server_info['SpecPort']}"; ?> <br/>
-						Карта: <? echo strip_tags($server_info['info']['Map']); ?><br/>
-						Онлайн: <? echo intval($server_info['info']['Players'])."/".intval($server_info['info']['MaxPlayers']); ?><br/>
-						VAC: <? echo strip_tags(($server_info['info']['Secure'] ? true : false) ? 'включен' : 'выключен'); ?><br/>
-						Версия: <? echo strip_tags($server_info['info']['Version']); ?><br/> -->
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="console">
@@ -174,20 +164,34 @@
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="config">
 					<div class="panel-body">
-						<!--<textarea class="form-control" type="text" style="width:100%;height:550px;overflow:auto;resize:vertical;"><? echo $server_cnf; ?></textarea><br/>-->
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Название</span>
-							<input id="server_name" type="text" class="form-control" placeholder="Lepus Server" value="<? echo $server['name']; ?>" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_name" type="text" class="form-control" placeholder="hostname" value="<? echo $server['name']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Пароль</span>
-							<input id="server_pass" type="text" class="form-control" placeholder="pcw" value="<? echo $server['passwd']; ?>" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_pass" type="text" class="form-control" placeholder="sv_password" value="<? echo $server['passwd']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">RCON</span>
-							<input id="server_rcon" type="text" class="form-control" placeholder="123" value="<? echo $server['rcon']; ?>" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_rcon" type="text" class="form-control" placeholder="rcon_password" value="<? echo $server['rcon']; ?>" style="width:238px" aria-describedby="basic-addon1">
+						</div></p>
+						<p><div class="input-group">
+						<span class="input-group-addon" id="basic-addon1" style="width:96px">Плагины</span>
+						<select class="selectpicker" data-width="239px">
+							<option>включены</option>
+							<option>выключены</option>
+						</select>
 						</div></p>
 						<input data-server-cnf="<? echo $server_name; ?>" type="submit" class="btn btn-success" value="Сохранить">
+						<br/><br/><br/>
+						<?
+						//	if ($server['addons'] == 0) $checked = 0;
+						//		else $checked = 1;
+							$checked = 1;
+						?>
+					   	<h3><small>Плагины</small></h3>
+						<input data-server-addons="<? echo $server_name; ?>" type="checkbox" name="Rename" <? if ($checked == 1) echo "checked"; else echo "unchecked"; ?>>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">
@@ -235,6 +239,8 @@
 <script src="/js/dataTables.bootstrap.min.js"></script>
 <script src="/js/sb-admin-2.js"></script>
 <script src="/js/alertify.min.js"></script>
+<script src="/js/bootstrap-switch.js"></script>
+<script src="/js/bootstrap-select.js"></script>
 <script>
 	$(document).on("click", "[data-server-cnf]", function(e) {
 		$(this).blur();
@@ -360,6 +366,38 @@
 					alertify.success('Обновлено'); return;
 				}
 		});
+	});
+	
+	$("[name='Rename']").bootstrapSwitch();
+	$('input[name="Rename"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		if(state == false) {
+			$(this).blur();
+			$('#myModal').modal('show');
+			$("#modal_info").html("<center>Специально обученная обезьяна выключает плагины на вашем сервере.</center>");
+			$.post("http://"+document.domain+"/public/cmd.php", {command: 'addons', user: $(this).data("server-addons"), do: "rename"}, function( data ){
+				$('#myModal').modal('hide');
+				if(data == 'OK'){
+					alertify.success('Выполнено'); 
+					return;
+				} else {
+					alertify.error(data); return;
+				}
+			});
+		}
+		else {
+			$(this).blur();
+			$('#myModal').modal('show');
+			$("#modal_info").html("<center>Специально обученная обезьяна включает плагины на вашем сервере.</center>");
+			$.post("http://"+document.domain+"/public/cmd.php", {command: 'addons', user: $(this).data("server-addons"), do: "back"}, function( data ){
+				$('#myModal').modal('hide');
+				if(data == 'OK'){
+					alertify.success('Выполнено'); 
+					return;
+				} else {
+					alertify.error(data); return;
+				}
+			});
+		}
 	});
 </script>
 </body>

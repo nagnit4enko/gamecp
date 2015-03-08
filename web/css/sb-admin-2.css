@@ -121,6 +121,8 @@ body {
 
 .sidebar .nav-second-level li a {
     padding-left: 37px;
+	padding-bottom: 8px;
+	padding-top: 8px;
 }
 
 .sidebar .nav-third-level li a {

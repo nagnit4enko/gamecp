@@ -49,8 +49,11 @@
 				<ul class="nav" id="side-menu">
 					<li><a href="/index.php?do=default"><i class="fa fa-newspaper-o fa-fw"></i> Новости</a></li>
 					<li>
-						<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>
-						<ul class="nav nav-second-level"><? echo $menu; ?></ul>
+						<?
+						if($menu[1] > 1) echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>';
+							else echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервер<span class="fa arrow"></span></a>';
+						?>
+						<ul class="nav nav-second-level"><? echo $menu[0]; ?></ul>
 					</li>
 				</ul>
 			</div>

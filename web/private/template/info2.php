@@ -11,7 +11,7 @@
 	$menu = get_servers();
 	
 	$server_demo = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=gotv", NULL);
-	$demo_arr = json_decode($server_demo, true);	
+	$demo_arr = json_decode($server_demo, true);
  ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,6 +30,8 @@
     <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	<link href="/css/alertify.core.css" rel="stylesheet">
 	<link href="/css/alertify.bootstrap.css" rel="stylesheet">
+	<link href="https://github.com/jschr/bootstrap-modal/blob/master/css/bootstrap-modal-bs3patch.css" rel="stylesheet">
+	<link href="https://github.com/jschr/bootstrap-modal/blob/master/css/bootstrap-modal.css" rel="stylesheet">
 </head>
 <body>
 <div id="myModal" class="modal fade">
@@ -42,11 +44,58 @@
 		</div>
 	</div>
 </div>
+<div id="myModal2" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div id="modal_info" class="modal-body">
+				Вы уверены?
+			</div>
+			<div class="modal-footer">
+			<button type="button" data-dismiss="modal" class="btn btn-primary" id="delete">Удалить</button>
+			<button type="button" data-dismiss="modal" class="btn btn-primary">Отмена</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="responsive" class="modal fade" tabindex="-1" data-width="760" style="display: none;">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Responsive</h4>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Some Input</h4>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+      </div>
+      <div class="col-md-6">
+        <h4>Some More Input</h4>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+        <p><input class="form-control" type="text" /></p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
+    <button type="button" class="btn btn-primary">Save changes</button>
+  </div>
+</div>
 <div id="wrapper">
 	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="sr-only">Toggle navigation</span>
+				<span class="sr-only">Навигация</span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
@@ -57,50 +106,91 @@
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i></a>
 				<ul class="dropdown-menu dropdown-user">
-					<li><a href="/?do=settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
+					<li><a data-responsive="data-responsive" href="#responsive" aria-controls="responsive"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
 					<li class="divider"></li>
 					<li><a href="/?do=exit"><i class="fa fa-sign-out fa-fw"></i> Выход</a></li>
 				</ul>
 			</li>
-		</ul>
-		
+		</ul>		
 		<div class="navbar-default sidebar" role="navigation">
 			<div class="sidebar-nav navbar-collapse">
 				<ul class="nav" id="side-menu">
 					<li><a href="/index.php?do=default"><i class="fa fa-newspaper-o fa-fw"></i> Новости</a></li>
-						<li>
-                            <a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level"><? echo $menu; ?></ul>
-						</li>
-					</ul>
+					<li>
+						<?
+						if($menu[1] > 1) echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>';
+							else echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервер<span class="fa arrow"></span></a>';
+						?>
+						<ul class="nav nav-second-level"><? echo $menu[0]; ?></ul>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</nav>
 	<div id="page-wrapper">
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header"><? echo strip_tags($server_info['HostName']); ?>	
+				<h1 class="page-header">
+				<?
+				if(isset($server_info['info']['HostName'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> ';
+					else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
+				if(isset($server_info['info']['HostName'])) echo "<lu id=\"sname\">".strip_tags($server_info['info']['HostName'])."</lu>";
+					else echo "<lu id=\"sname\">".strip_tags($server['name'])."</lu>";
+				?>
+				&nbsp;
 				<!--<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Включить">
-				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Выключить"> -->
+				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Выключить">-->
 				<input data-server-restart="<? echo $server_name; ?>" type="submit" class="btn btn-danger" value="Перезагрузить">
 				<input data-server-update="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить сервер">
 				</h1>
 			</div>
 		</div>
+		
+
+		
 		<div role="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Информация</a></li>
-				<li role="presentation"><a href="#console" aria-controls="console" role="tab" data-toggle="tab">Консоль</a></li>
+				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">О сервере</a></li>
+				<li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Настройки</a></li>
 				<li role="presentation"><a href="#gotv" aria-controls="gotv" role="tab" data-toggle="tab">Демо</a></li>
-				<li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Конфиг</a></li>
+				<li role="presentation"><a href="#console" aria-controls="console" role="tab" data-toggle="tab">Консоль</a></li>
 			</ul>
 			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane fade in active" id="info">
-					<div class="panel-body">
-					IP: <? echo "{$server['ip']}:{$server['port']}"; ?> <br/>
-					Online: <? echo intval($server_info['Players'])."/".intval($server_info['MaxPlayers']); ?><br/>
-					Map: <? echo strip_tags($server_info['Map']); ?><br/>
-					Server version: <? echo strip_tags($server_info['Version']); ?>
+				<div role="tabpanel" class="tab-pane fade in active" id="info" style="width:412px">
+					<div class="panel-body">		
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Игра</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1">
+							<?
+							if(isset($server_info['info']['ModDesc'])) echo $server_info['info']['ModDesc'];
+								else echo "сервер выключен";
+							?>
+							</span>
+						</div>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">IP</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['info']['GamePort']}"; ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">GOTV</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['info']['SpecPort']}"; ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Карта</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['Map']); ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Онлайн</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo intval($server_info['info']['Players'])."/".intval($server_info['info']['MaxPlayers']); ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">VAC</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags(($server_info['info']['Secure'] ? true : false) ? 'включен' : 'выключен'); ?></span>
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Версия</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['Version']); ?></span>
+						</div></p>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="console">
@@ -111,9 +201,19 @@
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="config">
 					<div class="panel-body">
-						<textarea class="form-control" type="text" style="width:100%;height:550px;overflow:auto;resize:vertical;"><? echo $server_cnf; ?></textarea><br/>
-						<input type="submit" class="btn btn-info" style="width: 49%;" value="Обновить">
-						<input type="submit" class="btn btn-info" style="width: 49%;" value="Сохранить">
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Название</span>
+							<input id="server_name" type="text" class="form-control" placeholder="hostname" value="<? echo $server['name']; ?>" style="width:238px" aria-describedby="basic-addon1">
+						</div>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Пароль</span>
+							<input id="server_pass" type="text" class="form-control" placeholder="sv_password" value="<? echo $server['passwd']; ?>" style="width:238px" aria-describedby="basic-addon1">
+						</div></p>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">RCON</span>
+							<input id="server_rcon" type="text" class="form-control" placeholder="rcon_password" value="<? echo $server['rcon']; ?>" style="width:238px" aria-describedby="basic-addon1">
+						</div></p>
+						<input data-server-cnf="<? echo $server_name; ?>" type="submit" class="btn btn-success" value="Сохранить">
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">
@@ -122,9 +222,9 @@
 							<table class="table table-striped table-bordered table-hover" id="dataTables-example">
 								<thead>
 									<tr>
-										<th style="text-align: center;">Название</th>
 										<th style="text-align: center;">Время</th>
-										<th style="text-align: center;">Размер (Мб)</th>
+										<th style="text-align: center;">Карта</th>
+										<th style="text-align: center;">Размер (мб)</th>
 										<th style="text-align: center;">Скачать</th>
 										<th style="text-align: center;">Удалить</th>
 									</tr>
@@ -135,8 +235,8 @@
 								foreach ($demo_arr as $val) {
 									if(empty($val)) continue;
 									echo "<tr id=\"$tr\">";
-									echo "<td><center>".strip_tags($val['name'])."</center></td>";
-									echo "<td><center>".strip_tags($val['name'])."</center></td>";
+									echo "<td><center>".strip_tags($val['time'])."</center></td>";
+									echo "<td><center>".strip_tags(strstr(substr($val['name'], 0, strpos($val['name'], '.')), 'de'))."</center></td>";
 									echo "<td><center>".bytesToSize1000(intval($val['size']))."</center></td>";
 									echo "<td><center><a href=\"".nginx_link($server_name, strip_tags($val['name']))."\" title=\"Скачать\"><i class=\"fa fa-download fa-fw\"></i></a></center></td>";
 									echo "<td><center><a data-delete-id=\"$tr\" data-server-name=\"$server_name\" data-demo-name=\"".strip_tags($val['name'])."\" href=\"#\" title=\"Удалить\"><i class=\"glyphicon glyphicon-remove\"></i></a></center></td>";
@@ -161,27 +261,55 @@
 <script src="/js/dataTables.bootstrap.min.js"></script>
 <script src="/js/sb-admin-2.js"></script>
 <script src="/js/alertify.min.js"></script>
+<script src="https://github.com/jschr/bootstrap-modal/blob/master/js/bootstrap-modalmanager.js"></script>
+<script src="https://github.com/jschr/bootstrap-modal/blob/master/js/bootstrap-modal.js"></script>
 <script>
-$(document).on("click", "[data-delete-id]", function(e) {
-	e.preventDefault();
-	var table = $('#dataTables-example').dataTable();
-	var ask = confirm("Вы уверены что хотите удалить демо?");
-	tr_id = $(this).data("delete-id");
-	if(ask == false) {
-		return;
-	} else {
-		$.post("http://"+document.domain+"/public/cmd.php", { command: 'delete', user: $(this).data("server-name"), file: $(this).data("demo-name")}, function( data ){
-			$('#myModal').modal('hide');
-			if(data == 'OK'){
-				table.fnDeleteRow(table.$("#"+tr_id));
-				alertify.success('Демо удалено');
-				return;
-			} else {
-				alertify.error('Ошибка'); return;
-			}
+	$(document).on("click", "[data-server-cnf]", function(e) {
+		$(this).blur();
+		$('#myModal').modal('show');
+		$("#modal_info").html("<center>Специально обученная обезьяна меняет настройки и перезагружает ваш сервер.</center>");
+		server_name = $('input[id=server_name]').val();
+		server_pass = $('input[id=server_pass]').val();
+		server_rcon = $('input[id=server_rcon]').val();
+		$.post("http://"+document.domain+"/public/cmd.php", {command: 'cnf', user: $(this).data("server-cnf"), name: server_name, pass: server_pass, rcon: server_rcon}, function( data ){
+				$('#myModal').modal('hide');
+				if(data == 'OK'){
+					$("#sname").html(server_name);
+					alertify.success('Выполнено'); 
+					return;
+				} else {
+					alertify.error(data); return;
+				}
+		});
 	});
-	}
-});
+	
+	$(document).on("click", "[data-delete-id]", function(e) {
+		e.preventDefault();
+		var table = $('#dataTables-example').dataTable();
+		tr_id = $(this).data("delete-id");
+		user = $(this).data("server-name");
+		file = $(this).data("demo-name");
+		$('#myModal2').modal('show')
+		.one('click', '#delete', function (e) {
+			$.post("http://"+document.domain+"/public/cmd.php", { command: 'delete', user: user, file: file}, function( data ){
+				if(data == 'OK'){
+					table.fnDeleteRow(table.$("#"+tr_id));
+					alertify.success('Запись игры удалена');
+					return;
+				} else {
+					alertify.error('Ошибка'); return;
+				}
+			});
+		});
+	});
+	
+		$(document).on("click", "[data-responsive]", function(e) {
+		e.preventDefault();
+		$('#responsive').modal('show')
+
+	});
+	
+
 	$(document).ready(function() {
 		$('#dataTables-example').DataTable({
 			stateSave: true
@@ -239,7 +367,7 @@ $(document).on("click", "[data-delete-id]", function(e) {
 		$(this).blur();
 		$('#myModal').modal('show');
 		$("#modal_info").html("<center>Специально обученная обезьяна обновляет ваш сервер.</center>");
-		$.post("http://"+document.domain+"/public/cmd.php", {command: 'update', user: $(this).data("server-update")}, function( data ){
+		$.post("http://"+document.domain+"/public/cmd.php", {command: 'update-restart', user: $(this).data("server-update")}, function( data ){
 				$('#myModal').modal('hide');
 				if(data == 'OK'){
 					alertify.success('Выполнено'); return;

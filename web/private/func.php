@@ -1,6 +1,7 @@
 <?
 function update_settings($name, $pass, $rcon, $server){
 		global $db;
+		$name = urldecode($name);
 		$arr = ["name" => $name, "passwd" => $pass, "rcon" => $rcon];
 		$query = $db->prepare("UPDATE `servers` SET `settings` = :settings WHERE `name` = :server");
 		$query->bindParam(':settings', json_encode($arr), PDO::PARAM_STR);
@@ -19,16 +20,18 @@ function nginx_link($server, $file){
 }
 
 function get_servers(){
-	global $db, $user; $i = '';
+	global $db, $user; $i = ''; $count = 0;
 	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id ORDER BY `port` ASC");
 	$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
 	$query->execute();
 	if($query->rowCount() > 0){
 		while($row=$query->fetch()){
-			$i = $i."<li><a href=\"/index.php?do=info&server=".urlencode(base64_encode($row['name']))."\"> {$row['ip']}:{$row['port']} </a></li>";
+			$server = server_info($row['name']);
+			$i = $i."<li><a href=\"/index.php?do=info&server=".urlencode(base64_encode($row['name']))."\">".$server['name']."<br/><small>{$row['ip']}:{$row['port']}</small></a></li>";
+			$count++;
 		}
 	}
-	return $i;
+	return array($i, $count);;
 }
 
 function bytesToSize1000($bytes){

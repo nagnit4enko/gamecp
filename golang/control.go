@@ -17,6 +17,7 @@ var CMD string
 var SERVER_NAME string
 var SERVER_PASSWD string
 var SERVER_RCON string
+var RENAME string
 
 const (
     PORT		= ":8081"
@@ -82,7 +83,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			}
 			
 			is_stop_start_restart := map[string]bool { 
-				"restart": true, "start": true, "stop": true, "log": true, "update-restart": true, "gotv": true, "delete": true, "cnf": true,
+				"restart": true, "start": true, "stop": true, "log": true, "update-restart": true, "gotv": true, "delete": true, "cnf": true, "addons": true,
 			}
 			if !is_stop_start_restart[CMD] {
 				fmt.Fprintf(w, "Wrong cmd")
@@ -124,7 +125,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				SERVER_NAME = r.URL.Query().Get("server_name")
 				SERVER_PASSWD = r.URL.Query().Get("server_passwd")
 				SERVER_RCON = r.URL.Query().Get("server_rcon")
-				re := regexp.MustCompile("^[a-zA-Z0-9_.-]*$")
+				re := regexp.MustCompile("^[a-zA-Z0-9_. -]*$")
 				
 				// Проверка на пустоту
 				if len(SERVER_NAME) == 0 {
@@ -181,6 +182,34 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			
+			if (CMD == "addons") {
+				RENAME = r.URL.Query().Get("do")
+				if len(RENAME) == 0 {
+					fmt.Fprintf(w, "need rename")
+					return
+				}
+				if (RENAME == "rename") {
+					err := os.Rename("/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf", "/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf1")
+					if err != nil {
+						fmt.Fprintf(w, "error")
+						return
+					}
+					fmt.Fprintf(w, "OK")
+					return
+				}
+				if (RENAME == "back") {
+					err := os.Rename("/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf1", "/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf")
+					if err != nil {
+						fmt.Fprintf(w, "error")
+						return
+					}
+					fmt.Fprintf(w, "OK")
+					return
+				}
+				fmt.Fprintf(w, "wrong do")
+				return
+			}
+			
 			if(CMD == "gotv"){
 			var i int
 			datas := make(map[string]Foo)
@@ -193,7 +222,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					
-					datas[fmt.Sprint(i)] = Foo{Name: f.Name(), Size: file.Size(), Time: file.ModTime().Format("02.01.2006 15:04:05")}
+					datas[fmt.Sprint(i)] = Foo{Name: f.Name(), Size: file.Size(), Time: file.ModTime().Format("2006.01.02 15:04:05")}
 					i++
 				}
 			j, _ := json.Marshal(datas)
