@@ -11,7 +11,20 @@ function update_settings($name, $pass, $rcon, $server){
 }
 
 function nginx_link($server, $file){
-	global $user;
+	global $db, $user;
+	if($user['admin'] == 1){
+		$query = $db->prepare("SELECT * FROM `servers` WHERE `name` =:name");
+		$query->bindParam(':name', $server, PDO::PARAM_STR);
+		$query->execute();
+		$row = $query->fetch();
+		
+		$query = $db->prepare("SELECT * FROM `users` WHERE `id` = :id");
+		$query->bindParam(':id', $row['user_id'], PDO::PARAM_STR);
+		$query->execute();
+		$row = $query->fetch();
+		
+		$user['nginx_key'] = $row['nginx_key'];
+	}
 	$domain = 'http://game.lepus.su';
 	$dir = "/gotv/$server/";
 	$time = time()+60*60*24;
@@ -21,8 +34,13 @@ function nginx_link($server, $file){
 
 function get_servers(){
 	global $db, $user; $i = ''; $count = 0;
-	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id ORDER BY `port` ASC");
-	$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
+	if($user['admin'] == 1){
+		$query = $db->prepare("SELECT * FROM `servers` ORDER BY `port` ASC");
+	}else{
+		$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id ORDER BY `port` ASC");
+		$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
+	}
+
 	$query->execute();
 	if($query->rowCount() > 0){
 		while($row=$query->fetch()){
@@ -64,11 +82,16 @@ function __autoload($class_name) {
 
 function get_access($name){
 	global $db, $user;
-	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id AND `name` = :name");
-	$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
-	$query->bindParam(':name', $name, PDO::PARAM_STR);
-	$query->execute();
+	if($user['admin'] == '1'){
+		$query = $db->prepare("SELECT * FROM `servers` WHERE `name` = :name");
+		$query->bindParam(':name', $name, PDO::PARAM_STR);
+	}else{
+		$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id AND `name` = :name");
+		$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
+		$query->bindParam(':name', $name, PDO::PARAM_STR);
+	}
 	
+	$query->execute();
 	if($query->rowCount() != 1)
 		$i =  ["accsess" => FALSE]; 
 	else
@@ -136,7 +159,7 @@ function auth($login, $session){
 	}
 	
 	$row = $query->fetch();
-	return ["id" => $row['id'], "nginx_key" => $row['nginx_key']];
+	return ["id" => $row['id'], "nginx_key" => $row['nginx_key'], "admin" => $row['admin']];
 }
 
 function login($login, $passwd){
