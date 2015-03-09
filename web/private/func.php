@@ -1,8 +1,8 @@
 <?
-function update_settings($name, $pass, $rcon, $server){
+function update_settings($name, $pass, $rcon, $addons, $server){
 		global $db;
 		$name = urldecode($name);
-		$arr = ["name" => $name, "passwd" => $pass, "rcon" => $rcon];
+		$arr = ["name" => $name, "passwd" => $pass, "rcon" => $rcon, "addons" => $addons];
 		$query = $db->prepare("UPDATE `servers` SET `settings` = :settings WHERE `name` = :server");
 		$query->bindParam(':settings', json_encode($arr), PDO::PARAM_STR);
 		$query->bindParam(':server', $server, PDO::PARAM_STR);
@@ -106,9 +106,9 @@ function server_info($name){
 	if(!empty($row['data']['settings'])){
 		$j = json_decode($row['data']['settings'], true);
 	}else{
-		$j = ["name" => NULL, "passwd" => NULL, "rcon" => NULL];
+		$j = ["name" => NULL, "passwd" => NULL, "rcon" => NULL, "addons" => NULL];
 	}
-	$i = ["ip" => $row['data']['ip'], "port" => $row['data']['port'], "name" => $j['name'], "passwd" => $j['passwd'], "rcon" => $j['rcon']];
+	$i = ["ip" => $row['data']['ip'], "port" => $row['data']['port'], "name" => $j['name'], "passwd" => $j['passwd'], "rcon" => $j['rcon'], "addons" => @$j['addons']];
 	return $i;
 }
 

@@ -30,7 +30,6 @@
     <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	<link href="/css/alertify.core.css" rel="stylesheet">
 	<link href="/css/alertify.bootstrap.css" rel="stylesheet">
-	<link href="/css/bootstrap-switch.css" rel="stylesheet">
 	<link href="/css/bootstrap-select.css" rel="stylesheet">
 </head>
 <body>
@@ -186,20 +185,12 @@
 						</div></p>
 						<p><div class="input-group">
 						<span class="input-group-addon" id="basic-addon1" style="width:96px">Плагины</span>
-						<select class="selectpicker" data-width="239px">
-							<option data-icon="glyphicon glyphicon-ok-circle">включить</option>
-							<option data-icon="glyphicon glyphicon-remove-circle">выключить</option>
+						<select id="server_addons" class="selectpicker" data-width="239px">
+							<option data-icon="glyphicon glyphicon-ok-circle" value="1" <? if($server['addons'] == 1) echo 'selected="selected"'; ?>>включить</option>
+							<option data-icon="glyphicon glyphicon-remove-circle" value="2" <? if($server['addons'] == 2) echo 'selected="selected"'; ?>>выключить</option>
 						</select>
 						</div></p>
 						<a data-server-cnf="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
-						<br/><br/><br/>
-						<?
-						//	if ($server['addons'] == 0) $checked = 0;
-						//		else $checked = 1;
-							$checked = 1;
-						?>
-					   	<!--<h3><small>Плагины</small></h3>
-						<input data-server-addons="<? echo $server_name; ?>" type="checkbox" name="Rename" <? if ($checked == 1) echo "checked"; else echo "unchecked"; ?>>-->
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">
@@ -247,7 +238,6 @@
 <script src="/js/dataTables.bootstrap.min.js"></script>
 <script src="/js/sb-admin-2.js"></script>
 <script src="/js/alertify.min.js"></script>
-<script src="/js/bootstrap-switch.js"></script>
 <script src="/js/bootstrap-select.js"></script>
 <script>
 	$(document).on("click", "[data-server-cnf]", function(e) {
@@ -257,7 +247,8 @@
 		server_name = $('input[id=server_name]').val();
 		server_pass = $('input[id=server_pass]').val();
 		server_rcon = $('input[id=server_rcon]').val();
-		$.post("http://"+document.domain+"/public/cmd.php", {command: 'cnf', user: $(this).data("server-cnf"), name: server_name, pass: server_pass, rcon: server_rcon}, function( data ){
+		server_addons = $('select[id=server_addons]').val();
+		$.post("http://"+document.domain+"/public/cmd.php", {command: 'cnf', user: $(this).data("server-cnf"), name: server_name, pass: server_pass, rcon: server_rcon, addons: server_addons}, function( data ){
 				$('#myModal').modal('hide');
 				if(data == 'OK'){
 					$("#sname").html(server_name);
@@ -374,38 +365,6 @@
 					alertify.success('Обновлено'); return;
 				}
 		});
-	});
-	
-	$("[name='Rename']").bootstrapSwitch();
-	$('input[name="Rename"]').on('switchChange.bootstrapSwitch', function(event, state) {
-		if(state == false) {
-			$(this).blur();
-			$('#myModal').modal('show');
-			$("#modal_info").html("<center>Специально обученная обезьяна выключает плагины на вашем сервере.</center>");
-			$.post("http://"+document.domain+"/public/cmd.php", {command: 'addons', user: $(this).data("server-addons"), do: "rename"}, function( data ){
-				$('#myModal').modal('hide');
-				if(data == 'OK'){
-					alertify.success('Выполнено'); 
-					return;
-				} else {
-					alertify.error(data); return;
-				}
-			});
-		}
-		else {
-			$(this).blur();
-			$('#myModal').modal('show');
-			$("#modal_info").html("<center>Специально обученная обезьяна включает плагины на вашем сервере.</center>");
-			$.post("http://"+document.domain+"/public/cmd.php", {command: 'addons', user: $(this).data("server-addons"), do: "back"}, function( data ){
-				$('#myModal').modal('hide');
-				if(data == 'OK'){
-					alertify.success('Выполнено'); 
-					return;
-				} else {
-					alertify.error(data); return;
-				}
-			});
-		}
 	});
 </script>
 </body>

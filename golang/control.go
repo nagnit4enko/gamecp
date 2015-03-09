@@ -17,7 +17,7 @@ var CMD string
 var SERVER_NAME string
 var SERVER_PASSWD string
 var SERVER_RCON string
-var RENAME string
+var SERVER_ADDONS string
 
 const (
     PORT		= ":8081"
@@ -119,12 +119,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				fmt.Fprintf(w, string(out))
+				return
 			}
 			
 			if (CMD == "cnf") {
 				SERVER_NAME = r.URL.Query().Get("server_name")
 				SERVER_PASSWD = r.URL.Query().Get("server_passwd")
 				SERVER_RCON = r.URL.Query().Get("server_rcon")
+				SERVER_ADDONS = r.URL.Query().Get("server_addons")
 				re := regexp.MustCompile("^[a-zA-Z0-9_. -]*$")
 				
 				// Проверка на пустоту
@@ -140,6 +142,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 					fmt.Fprintf(w, "empty server rcon")
 					return
 				}
+				if len(SERVER_ADDONS) == 0 {
+					fmt.Fprintf(w, "empty server addons")
+					return
+				}
 				
 				// Проверка на допустимые символы
 				if(re.MatchString(SERVER_NAME) == false){
@@ -152,6 +158,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				}
 				if(re.MatchString(SERVER_RCON) == false){
 					fmt.Fprintf(w, "wrong server name")
+					return
+				}
+				if(re.MatchString(SERVER_ADDONS) == false){
+					fmt.Fprintf(w, "wrong server addons")
 					return
 				}
 				
@@ -178,35 +188,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					fmt.Fprintf(w, "error")
 				}
+				
+				if(SERVER_ADDONS == `1`){
+					err := os.Chmod("/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf", 0644)
+					if err != nil {
+						fmt.Fprintf(w, "error")
+						return
+					}
+				}else{
+					err := os.Chmod("/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf", 0000)
+					if err != nil {
+						fmt.Fprintf(w, "error")
+						return
+					}
+				}
 				fmt.Fprintf(w, "OK")
-				return
-			}
-			
-			if (CMD == "addons") {
-				RENAME = r.URL.Query().Get("do")
-				if len(RENAME) == 0 {
-					fmt.Fprintf(w, "need rename")
-					return
-				}
-				if (RENAME == "rename") {
-					err := os.Rename("/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf", "/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf1")
-					if err != nil {
-						fmt.Fprintf(w, "error")
-						return
-					}
-					fmt.Fprintf(w, "OK")
-					return
-				}
-				if (RENAME == "back") {
-					err := os.Rename("/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf1", "/home/"+USER+"/serverfiles/csgo/addons/metamod.vdf")
-					if err != nil {
-						fmt.Fprintf(w, "error")
-						return
-					}
-					fmt.Fprintf(w, "OK")
-					return
-				}
-				fmt.Fprintf(w, "wrong do")
 				return
 			}
 			
