@@ -21,7 +21,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Панель уравления</title>
+    <title>Панель управления</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/metisMenu.min.css" rel="stylesheet">
     <link href="/css/dataTables.bootstrap.css" rel="stylesheet">
@@ -106,8 +106,8 @@
 				&nbsp;
 				<!--<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Включить">
 				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Выключить">-->
-				<input data-server-restart="<? echo $server_name; ?>" type="submit" class="btn btn-danger" value="Перезагрузить">
-				<input data-server-update="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить сервер">
+				<a data-server-restart="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-danger"><span class="glyphicon glyphicon-refresh"></span> Перезагрузить</a>
+				<a data-server-update="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Обновить сервер</a>
 				</h2>
 			</div>
 		</div>
@@ -120,7 +120,7 @@
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane fade in active" id="info" style="width:412px">
-					<div class="panel-body">		
+					<div class="panel-body">						
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Игра</span>
 							<span class="form-control" style="width:238px" aria-describedby="basic-addon1">
@@ -130,6 +130,10 @@
 							?>
 							</span>
 						</div>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Локация</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1">Germany</span>
+						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">IP</span>
 							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['info']['GamePort']}"; ?></span>
@@ -154,12 +158,16 @@
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Версия</span>
 							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['Version']); ?></span>
 						</div></p>
+						<div class="panel panel-default" style="width:334px">
+							<div class="panel-heading" style="height:auto; padding: 6px 22px; color: #555;">Подключение</div>
+							<div class="panel-body" style="height:auto; padding: 6px 22px;"><a href="steam://connect/<? echo "{$server['ip']}:{$server['port']}/{$server['passwd']}"?>">connect <? echo "{$server['ip']}:{$server['port']}; password {$server['passwd']}"?></a></div>
+						</div>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="console">
 					<div class="panel-body">
 						<pre id="log_<? echo $server_name; ?>" style="max-height:580px;overflow:auto;"> <? echo $server_log; ?> </pre>
-						<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить">
+						<a data-server-log="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary"><span class="glyphicon glyphicon-repeat"></span> Обновить</a>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="config">
@@ -179,19 +187,19 @@
 						<p><div class="input-group">
 						<span class="input-group-addon" id="basic-addon1" style="width:96px">Плагины</span>
 						<select class="selectpicker" data-width="239px">
-							<option>включены</option>
-							<option>выключены</option>
+							<option data-icon="glyphicon glyphicon-ok-circle">включить</option>
+							<option data-icon="glyphicon glyphicon-remove-circle">выключить</option>
 						</select>
 						</div></p>
-						<input data-server-cnf="<? echo $server_name; ?>" type="submit" class="btn btn-success" value="Сохранить">
+						<a data-server-cnf="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
 						<br/><br/><br/>
 						<?
 						//	if ($server['addons'] == 0) $checked = 0;
 						//		else $checked = 1;
 							$checked = 1;
 						?>
-					   	<h3><small>Плагины</small></h3>
-						<input data-server-addons="<? echo $server_name; ?>" type="checkbox" name="Rename" <? if ($checked == 1) echo "checked"; else echo "unchecked"; ?>>
+					   	<!--<h3><small>Плагины</small></h3>
+						<input data-server-addons="<? echo $server_name; ?>" type="checkbox" name="Rename" <? if ($checked == 1) echo "checked"; else echo "unchecked"; ?>>-->
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">

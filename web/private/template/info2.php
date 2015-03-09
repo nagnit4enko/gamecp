@@ -21,7 +21,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Панель уравления</title>
+    <title>Панель управления</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/metisMenu.min.css" rel="stylesheet">
     <link href="/css/dataTables.bootstrap.css" rel="stylesheet">
@@ -30,8 +30,8 @@
     <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	<link href="/css/alertify.core.css" rel="stylesheet">
 	<link href="/css/alertify.bootstrap.css" rel="stylesheet">
-	<link href="https://github.com/jschr/bootstrap-modal/blob/master/css/bootstrap-modal-bs3patch.css" rel="stylesheet">
-	<link href="https://github.com/jschr/bootstrap-modal/blob/master/css/bootstrap-modal.css" rel="stylesheet">
+	<link href="/css/bootstrap-switch.css" rel="stylesheet">
+	<link href="/css/bootstrap-select.css" rel="stylesheet">
 </head>
 <body>
 <div id="myModal" class="modal fade">
@@ -57,40 +57,6 @@
 		</div>
 	</div>
 </div>
-<div id="responsive" class="modal fade" tabindex="-1" data-width="760" style="display: none;">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title">Responsive</h4>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col-md-6">
-        <h4>Some Input</h4>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-      </div>
-      <div class="col-md-6">
-        <h4>Some More Input</h4>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-        <p><input class="form-control" type="text" /></p>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
-    <button type="button" class="btn btn-primary">Save changes</button>
-  </div>
-</div>
 <div id="wrapper">
 	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 		<div class="navbar-header">
@@ -106,7 +72,7 @@
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i></a>
 				<ul class="dropdown-menu dropdown-user">
-					<li><a data-responsive="data-responsive" href="#responsive" aria-controls="responsive"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
+					<li><a href="#settings" aria-controls="settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
 					<li class="divider"></li>
 					<li><a href="/?do=exit"><i class="fa fa-sign-out fa-fw"></i> Выход</a></li>
 				</ul>
@@ -130,7 +96,7 @@
 	<div id="page-wrapper">
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header">
+				<h2 class="page-header">
 				<?
 				if(isset($server_info['info']['HostName'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> ';
 					else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
@@ -140,14 +106,11 @@
 				&nbsp;
 				<!--<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Включить">
 				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Выключить">-->
-				<input data-server-restart="<? echo $server_name; ?>" type="submit" class="btn btn-danger" value="Перезагрузить">
-				<input data-server-update="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить сервер">
-				</h1>
+				<a data-server-restart="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-danger"><span class="glyphicon glyphicon-refresh"></span> Перезагрузить</a>
+				<a data-server-update="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Обновить сервер</a>
+				</h2>
 			</div>
 		</div>
-		
-
-		
 		<div role="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
 				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">О сервере</a></li>
@@ -157,7 +120,7 @@
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane fade in active" id="info" style="width:412px">
-					<div class="panel-body">		
+					<div class="panel-body">						
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Игра</span>
 							<span class="form-control" style="width:238px" aria-describedby="basic-addon1">
@@ -167,6 +130,10 @@
 							?>
 							</span>
 						</div>
+						<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Локация</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1">Germany, Frankfurt</span>
+						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">IP</span>
 							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['info']['GamePort']}"; ?></span>
@@ -191,12 +158,16 @@
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Версия</span>
 							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['Version']); ?></span>
 						</div></p>
+						<div class="panel panel-default" style="width:334px">
+							<div class="panel-heading" style="height:auto; padding: 6px 22px; color: #555;">Подключение</div>
+							<div class="panel-body" style="height:auto; padding: 6px 22px;"><a href="steam://connect/<? echo "{$server['ip']}:{$server['port']}/{$server['passwd']}"?>">connect <? echo "{$server['ip']}:{$server['port']}; password {$server['passwd']}"?></a></div>
+						</div>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="console">
 					<div class="panel-body">
 						<pre id="log_<? echo $server_name; ?>" style="max-height:580px;overflow:auto;"> <? echo $server_log; ?> </pre>
-						<input data-server-log="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Обновить">
+						<a data-server-log="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary"><span class="glyphicon glyphicon-repeat"></span> Обновить</a>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="config">
@@ -213,7 +184,22 @@
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">RCON</span>
 							<input id="server_rcon" type="text" class="form-control" placeholder="rcon_password" value="<? echo $server['rcon']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div></p>
-						<input data-server-cnf="<? echo $server_name; ?>" type="submit" class="btn btn-success" value="Сохранить">
+						<p><div class="input-group">
+						<span class="input-group-addon" id="basic-addon1" style="width:96px">Плагины</span>
+						<select class="selectpicker" data-width="239px">
+							<option data-icon="glyphicon glyphicon-ok-circle">включить</option>
+							<option data-icon="glyphicon glyphicon-remove-circle">выключить</option>
+						</select>
+						</div></p>
+						<a data-server-cnf="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
+						<br/><br/><br/>
+						<?
+						//	if ($server['addons'] == 0) $checked = 0;
+						//		else $checked = 1;
+							$checked = 1;
+						?>
+					   	<!--<h3><small>Плагины</small></h3>
+						<input data-server-addons="<? echo $server_name; ?>" type="checkbox" name="Rename" <? if ($checked == 1) echo "checked"; else echo "unchecked"; ?>>-->
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">
@@ -261,8 +247,8 @@
 <script src="/js/dataTables.bootstrap.min.js"></script>
 <script src="/js/sb-admin-2.js"></script>
 <script src="/js/alertify.min.js"></script>
-<script src="https://github.com/jschr/bootstrap-modal/blob/master/js/bootstrap-modalmanager.js"></script>
-<script src="https://github.com/jschr/bootstrap-modal/blob/master/js/bootstrap-modal.js"></script>
+<script src="/js/bootstrap-switch.js"></script>
+<script src="/js/bootstrap-select.js"></script>
 <script>
 	$(document).on("click", "[data-server-cnf]", function(e) {
 		$(this).blur();
@@ -302,13 +288,6 @@
 			});
 		});
 	});
-	
-		$(document).on("click", "[data-responsive]", function(e) {
-		e.preventDefault();
-		$('#responsive').modal('show')
-
-	});
-	
 
 	$(document).ready(function() {
 		$('#dataTables-example').DataTable({
@@ -395,6 +374,38 @@
 					alertify.success('Обновлено'); return;
 				}
 		});
+	});
+	
+	$("[name='Rename']").bootstrapSwitch();
+	$('input[name="Rename"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		if(state == false) {
+			$(this).blur();
+			$('#myModal').modal('show');
+			$("#modal_info").html("<center>Специально обученная обезьяна выключает плагины на вашем сервере.</center>");
+			$.post("http://"+document.domain+"/public/cmd.php", {command: 'addons', user: $(this).data("server-addons"), do: "rename"}, function( data ){
+				$('#myModal').modal('hide');
+				if(data == 'OK'){
+					alertify.success('Выполнено'); 
+					return;
+				} else {
+					alertify.error(data); return;
+				}
+			});
+		}
+		else {
+			$(this).blur();
+			$('#myModal').modal('show');
+			$("#modal_info").html("<center>Специально обученная обезьяна включает плагины на вашем сервере.</center>");
+			$.post("http://"+document.domain+"/public/cmd.php", {command: 'addons', user: $(this).data("server-addons"), do: "back"}, function( data ){
+				$('#myModal').modal('hide');
+				if(data == 'OK'){
+					alertify.success('Выполнено'); 
+					return;
+				} else {
+					alertify.error(data); return;
+				}
+			});
+		}
 	});
 </script>
 </body>
