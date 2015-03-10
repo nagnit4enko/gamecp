@@ -33,7 +33,7 @@
 	<link href="/css/bootstrap-select.css" rel="stylesheet">
 </head>
 <body>
-<div id="myModal" class="modal fade">
+<div id="myModal" class="modal fade" data-backdrop="static">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -99,7 +99,7 @@
 				<?
 				if(isset($server_info['info']['HostName'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> ';
 					else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
-				if(isset($server_info['info']['HostName'])) echo "<lu id=\"sname\">".strip_tags(rtrim($server_info['info']['HostName'], " by lepus.su"))."</lu>";
+				if(isset($server_info['info']['HostName'])) echo "<lu id=\"sname\">".strip_tags(str_replace(" by lepus.su", "", $server_info['info']['HostName']))."</lu>";
 					else echo "<lu id=\"sname\">".strip_tags($server['name'])."</lu>";
 				?>
 				&nbsp;
@@ -247,8 +247,11 @@
 <script src="/js/alertify.min.js"></script>
 <script src="/js/bootstrap-select.js"></script>
 <script>
+	var lock = 0;
 	$(document).on("click", "[data-server-cnf]", function(e) {
 		$(this).blur();
+		if(lock == 1) return;
+		lock = 1;
 		$('#myModal').modal('show');
 		$("#modal_info").html("<center>Специально обученная обезьяна меняет настройки и перезагружает ваш сервер.</center>");
 		server_name = $('input[id=server_name]').val();
@@ -259,10 +262,13 @@
 				$('#myModal').modal('hide');
 				if(data == 'OK'){
 					$("#sname").html(server_name);
-					alertify.success('Выполнено'); 
+					alertify.success('Выполнено');
+					lock = 0;
 					return;
 				} else {
-					alertify.error(data); return;
+					alertify.error(data);
+					lock = 0; 
+					return;
 				}
 		});
 	});
@@ -300,14 +306,16 @@
 
 	$(document).on("click", "[data-server-restart]", function(e) {
 		$(this).blur();
+		if(lock == 1) return;
+		lock = 1;
 		$('#myModal').modal('show');
 		$("#modal_info").html("<center>Специально обученная обезьяна перезагружает ваш сервер.</center>");
 		$.post("http://"+document.domain+"/public/cmd.php", {command: 'restart', user: $(this).data("server-restart")}, function( data ){
 				$('#myModal').modal('hide');
 				if(data == 'OK'){
-					alertify.success('Выполнено'); return;
+					lock = 0; alertify.success('Выполнено'); return;
 				} else {
-					alertify.error('Ошибка'); return;
+					lock = 0; alertify.error('Ошибка'); return;
 				}
 		});
 	});
@@ -342,14 +350,16 @@
 	
 	$(document).on("click", "[data-server-update]", function(e) {
 		$(this).blur();
+		if(lock == 1) return;
+		lock = 1;
 		$('#myModal').modal('show');
 		$("#modal_info").html("<center>Специально обученная обезьяна обновляет ваш сервер.</center>");
 		$.post("http://"+document.domain+"/public/cmd.php", {command: 'update-restart', user: $(this).data("server-update")}, function( data ){
 				$('#myModal').modal('hide');
 				if(data == 'OK'){
-					alertify.success('Выполнено'); return;
+					lock = 0; alertify.success('Выполнено'); return;
 				} else {
-					alertify.error('Ошибка'); return;
+					lock = 0; alertify.error('Ошибка'); return;
 				}
 		});
 	});

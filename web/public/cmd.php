@@ -29,12 +29,12 @@ if(!$row["accsess"]) die("error");
 if($_POST['command'] == 'cnf'){
 	if(!isset($_POST['name']) || !isset($_POST['pass']) || !isset($_POST['rcon'])) die('empty');
 	$_POST['name'] = str_replace(" ","%20", $_POST['name']);
-	if(preg_match('/[^0-9a-zA-Z_.%-]/', $_POST['name'])) die('er_name '.$_POST['name']);
+	if(preg_match('/[^0-9a-zA-Z_.%-]/', $_POST['name'])) die('er_name');
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['pass'])) die('er_pass');
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['rcon'])) die('er_rcon');
 	if(!is_numeric($_POST['addons'])) die('er_addons');
 	if(update_settings($_POST['name'], $_POST['pass'], $_POST['rcon'], $_POST['addons'], $_POST['user']) == 'OK'){
-		if(strpos($_POST['name'],'by lepus.su') === FALSE) $_POST['name'] = $_POST['name'].'%20by%20lepus.su';
+		//if(strpos($_POST['name'],'by lepus.su') === FALSE) $_POST['name'] = $_POST['name'].'%20by%20lepus.su';
 		go_status($_POST['user'], time()+60*3);
 		if(curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$_POST['user']}&cmd={$_POST['command']}&server_name={$_POST['name']}&server_passwd={$_POST['pass']}&server_rcon={$_POST['rcon']}&server_addons={$_POST['addons']}", NULL) == 'OK'){
 			$_POST['command'] = 'restart';
