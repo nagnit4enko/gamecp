@@ -99,7 +99,7 @@
 				<?
 				if(isset($server_info['info']['HostName'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> ';
 					else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
-				if(isset($server_info['info']['HostName'])) echo "<lu id=\"sname\">".strip_tags($server_info['info']['HostName'])."</lu>";
+				if(isset($server_info['info']['HostName'])) echo "<lu id=\"sname\">".strip_tags(rtrim($server_info['info']['HostName'], " by lepus.su"))."</lu>";
 					else echo "<lu id=\"sname\">".strip_tags($server['name'])."</lu>";
 				?>
 				&nbsp;

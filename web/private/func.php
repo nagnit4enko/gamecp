@@ -56,6 +56,15 @@ function bytesToSize1000($bytes){
     return @round($bytes / pow(1000, ($i = floor(log($bytes, 1000)))), 2);
 }
 
+function go_status($name, $status){
+	global $db;
+	$query = $db->prepare("UPDATE `servers` SET `go_status` = :status WHERE `name` =:name");
+	$query->bindParam(':status', $status, PDO::PARAM_STR);
+	$query->bindParam(':name', $name, PDO::PARAM_STR);
+	$query->execute();
+	return 'OK';
+}
+
 function curl_query($link, $post){
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL,$link);
