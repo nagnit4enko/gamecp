@@ -65,7 +65,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/">Панель управления</a>
+			<a class="navbar-brand" href="/">Панель управления <? if ($user['admin'] == 1) echo '(админ)'?></a>
 		</div>
 		<ul class="nav navbar-top-links navbar-right">
 			<li class="dropdown">
@@ -103,10 +103,13 @@
 					else echo "<lu id=\"sname\">".strip_tags($server['name'])."</lu>";
 				?>
 				&nbsp;
-				<!--<input data-server-start="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Включить">
-				<input data-server-stop="<? echo $server_name; ?>" type="submit" class="btn btn-primary" value="Выключить">-->
 				<a data-server-restart="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-danger"><span class="glyphicon glyphicon-refresh"></span> Перезагрузить</a>
 				<a data-server-update="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Обновить сервер</a>
+				<?
+				if($user['admin'] == 1)
+					if(isset($server_info['info']['HostName'])) echo '&nbsp;<input data-server-stop='.$server_name.' type="submit" class="btn btn-default" value="Выключить">';
+						else echo '&nbsp;<input data-server-start='.$server_name.' type="submit" class="btn btn-default" value="Включить">';
+				?>
 				</h2>
 			</div>
 		</div>
@@ -149,6 +152,10 @@
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Онлайн</span>
 							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo intval($server_info['info']['Players'])."/".intval($server_info['info']['MaxPlayers']); ?></span>
 						</div></p>
+							<p><div class="input-group">
+							<span class="input-group-addon" id="basic-addon1" style="width:96px">Плагины</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags(($server['addons'] == 2 ? true : false) ? 'выключены' : 'включены'); ?></span>
+						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">VAC</span>
 							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags(($server_info['info']['Secure'] ? true : false) ? 'включен' : 'выключен'); ?></span>
@@ -186,8 +193,8 @@
 						<p><div class="input-group">
 						<span class="input-group-addon" id="basic-addon1" style="width:96px">Плагины</span>
 						<select id="server_addons" class="selectpicker" data-width="239px">
-							<option data-icon="glyphicon glyphicon-ok-circle" value="1" <? if($server['addons'] == 1) echo 'selected="selected"'; ?>>включить</option>
-							<option data-icon="glyphicon glyphicon-remove-circle" value="2" <? if($server['addons'] == 2) echo 'selected="selected"'; ?>>выключить</option>
+							<option value="1" <? if($server['addons'] == 1) echo 'selected="selected"'; ?>>включены</option>
+							<option value="2" <? if($server['addons'] == 2) echo 'selected="selected"'; ?>>выключены</option>
 						</select>
 						</div></p>
 						<a data-server-cnf="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
@@ -314,7 +321,7 @@
 				if(data == 'OK'){
 					alertify.success('Выполнено'); return;
 				} else {
-					alertify.error('Ошибка'); return;
+					alertify.error(data); return;
 				}
 		});
 	});
