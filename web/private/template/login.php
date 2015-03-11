@@ -73,7 +73,7 @@ $(document).keypress(function(event){
 });
 
 	$("#do_login").click(function(e) {
-		
+		$(this).blur();
 		$.post("http://"+document.domain+"/public/login.php", {login: $('input[id=login]').val(), password: $('input[id=password]').val()}, function( data ){
 		
 		if(data == "error"){

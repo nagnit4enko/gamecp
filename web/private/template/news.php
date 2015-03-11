@@ -18,6 +18,25 @@
 	<link href="/css/alertify.bootstrap.css" rel="stylesheet">
 </head>
 <body>
+<div id="ModalSettings" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Change password</h4>
+            </div>
+            <div id="modal_info" class="modal-body"><center>
+		  <p><input class="form-control input-sm" id="my_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="your old password"> </p>
+		  <p><input class="form-control input-sm" id="new_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="your new password"> </p>
+		  <p><input class="form-control input-sm" id="repeat_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="repeat new password"> </p>
+		</center></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-save-settings>Save changes</button>
+            </div>
+        </div>
+	</div>
+</div>
 <div id="wrapper">
 	<!-- Navigation -->
 	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -38,7 +57,7 @@
 					<i class="fa fa-caret-down"></i>
 				</a>
 			<ul class="dropdown-menu dropdown-user">
-				<li><a href="/?do=settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
+				<li><a data-change-settings href="#settings" aria-controls="settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
 				<li class="divider"></li>
 				<li><a href="/?do=exit"><i class="fa fa-sign-out fa-fw"></i> Выход</a></li>
 			</ul>
@@ -49,10 +68,7 @@
 				<ul class="nav" id="side-menu">
 					<li><a href="/index.php?do=default"><i class="fa fa-newspaper-o fa-fw"></i> Новости</a></li>
 					<li>
-						<?
-						if($menu[1] > 1) echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>';
-							else echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервер<span class="fa arrow"></span></a>';
-						?>
+						<? if($menu[1] > 1) echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>'; else echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервер<span class="fa arrow"></span></a>'; ?>
 						<ul class="nav nav-second-level"><? echo $menu[0]; ?></ul>
 					</li>
 				</ul>
@@ -103,6 +119,31 @@
 <script src="/js/sb-admin-2.js"></script>
 <script src="/js/alertify.min.js"></script>
 <script>
+	$(document).on("click", "[data-save-settings]", function(e) {
+		$(this).blur();
+		e.preventDefault();
+		pass = $('input[id=my_password]').val();
+		npass = $('input[id=new_password]').val();
+		rpass = $('input[id=repeat_password]').val();
+		$.post("http://"+document.domain+"/public/change_password.php", {pass: pass, npass: npass, rpass: rpass}, function( data ){
+			$('#ModalSettings').modal('hide');
+			$("#my_password").val('');;
+			$("#new_password").val('');;
+			$("#repeat_password").val('');;
+			if(data == 'OK'){
+				alertify.success('Выполнено');
+				setTimeout("document.location.href='http://game.lepus.su/'", 1500);
+				} else {
+				alertify.error(data);
+			}
+			return;
+		});
+	});
+	$(document).on("click", "[data-change-settings]", function(e) {
+		e.preventDefault();
+		$(this).blur();
+		$('#ModalSettings').modal('show');
+	});
     $(document).ready(function() {
         $('#dataTables-example').DataTable({
 				stateSave: true

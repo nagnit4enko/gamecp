@@ -168,7 +168,7 @@ function auth($login, $session){
 	}
 	
 	$row = $query->fetch();
-	return ["id" => $row['id'], "nginx_key" => $row['nginx_key'], "admin" => $row['admin']];
+	return ["id" => $row['id'], "nginx_key" => $row['nginx_key'], "admin" => $row['admin'], "passwd" => $row['passwd']];
 }
 
 function login($login, $passwd){

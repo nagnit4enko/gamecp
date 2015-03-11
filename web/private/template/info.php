@@ -56,6 +56,25 @@
 		</div>
 	</div>
 </div>
+<div id="ModalSettings" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Change password</h4>
+            </div>
+            <div id="modal_info" class="modal-body"><center>
+		  <p><input class="form-control input-sm" id="my_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="your old password"> </p>
+		  <p><input class="form-control input-sm" id="new_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="your new password"> </p>
+		  <p><input class="form-control input-sm" id="repeat_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="repeat new password"> </p>
+		</center></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-save-settings>Save changes</button>
+            </div>
+        </div>
+	</div>
+</div>
 <div id="wrapper">
 	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 		<div class="navbar-header">
@@ -71,7 +90,7 @@
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i></a>
 				<ul class="dropdown-menu dropdown-user">
-					<li><a href="#settings" aria-controls="settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
+					<li><a data-change-settings href="#settings" aria-controls="settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
 					<li class="divider"></li>
 					<li><a href="/?do=exit"><i class="fa fa-sign-out fa-fw"></i> Выход</a></li>
 				</ul>
@@ -82,10 +101,7 @@
 				<ul class="nav" id="side-menu">
 					<li><a href="/index.php?do=default"><i class="fa fa-newspaper-o fa-fw"></i> Новости</a></li>
 					<li>
-						<?
-						if($menu[1] > 1) echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>';
-							else echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервер<span class="fa arrow"></span></a>';
-						?>
+						<? if($menu[1] > 1) echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>'; else echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервер<span class="fa arrow"></span></a>'; ?>
 						<ul class="nav nav-second-level"><? echo $menu[0]; ?></ul>
 					</li>
 				</ul>
@@ -96,20 +112,12 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<h2 class="page-header">
-				<?
-				if(isset($server_info['info']['HostName'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> ';
-					else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
-				if(isset($server_info['info']['HostName'])) echo "<lu id=\"sname\">".strip_tags(str_replace(" by lepus.su", "", $server_info['info']['HostName']))."</lu>";
-					else echo "<lu id=\"sname\">".strip_tags($server['name'])."</lu>";
-				?>
+				<? if(isset($server_info['info']['HostName'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> '; else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
+				if(isset($server_info['info']['HostName'])) echo "<lu id=\"sname\">".strip_tags(str_replace(" by lepus.su", "", $server_info['info']['HostName']))."</lu>"; else echo "<lu id=\"sname\">".strip_tags($server['name'])."</lu>"; ?>
 				&nbsp;
 				<a data-server-restart="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-danger"><span class="glyphicon glyphicon-refresh"></span> Перезагрузить</a>
 				<a data-server-update="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Обновить сервер</a>
-				<?
-				if($user['admin'] == 1)
-					if(isset($server_info['info']['HostName'])) echo '&nbsp;<input data-server-stop='.$server_name.' type="submit" class="btn btn-default" value="Выключить">';
-						else echo '&nbsp;<input data-server-start='.$server_name.' type="submit" class="btn btn-default" value="Включить">';
-				?>
+				<? if($user['admin'] == 1) if(isset($server_info['info']['HostName'])) echo '&nbsp;<input data-server-stop='.$server_name.' type="submit" class="btn btn-default" value="Выключить">'; else echo '&nbsp;<input data-server-start='.$server_name.' type="submit" class="btn btn-default" value="Включить">'; ?>
 				</h2>
 			</div>
 		</div>
@@ -125,12 +133,7 @@
 					<div class="panel-body">						
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Игра</span>
-							<span class="form-control" style="width:238px" aria-describedby="basic-addon1">
-							<?
-							if(isset($server_info['info']['ModDesc'])) echo $server_info['info']['ModDesc'];
-								else echo "сервер выключен";
-							?>
-							</span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? if(isset($server_info['info']['ModDesc'])) echo $server_info['info']['ModDesc']; else echo "сервер выключен"; ?></span>
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Локация</span>
@@ -142,11 +145,11 @@
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">GOTV</span>
-							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['info']['SpecPort']}"; ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? if(isset($server_info['info']['SpecPort'])) echo "{$server['ip']}:{$server_info['info']['SpecPort']}"; else echo "выключено";?></span>
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Карта</span>
-							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags($server_info['info']['Map']); ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? if (strpos($server_info['info']['Map'], 'workshop') !== false) echo strip_tags(substr(strstr($server_info['info']['Map'], '/'), 1)); else echo strip_tags($server_info['info']['Map']); ?></span>
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Онлайн</span>
@@ -180,7 +183,7 @@
 					<div class="panel-body">
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Название</span>
-							<input id="server_name" type="text" class="form-control" placeholder="hostname" value="<? echo $server['name']; ?>" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_name" type="text" class="form-control" placeholder="hostname" value="<? echo $server['name']; ?>" style="width:238px" aria-describedby="basic-addon1" autofocus value="value <? echo $server['name']; ?>" onfocus="this.value = this.value">
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Пароль</span>
@@ -248,6 +251,34 @@
 <script src="/js/bootstrap-select.js"></script>
 <script>
 	var lock = 0;
+	
+	$(document).on("click", "[data-save-settings]", function(e) {
+		$(this).blur();
+		e.preventDefault();
+		pass = $('input[id=my_password]').val();
+		npass = $('input[id=new_password]').val();
+		rpass = $('input[id=repeat_password]').val();
+		$.post("http://"+document.domain+"/public/change_password.php", {pass: pass, npass: npass, rpass: rpass}, function( data ){
+			$('#ModalSettings').modal('hide');
+			$("#my_password").val('');;
+			$("#new_password").val('');;
+			$("#repeat_password").val('');;
+			if(data == 'OK'){
+				alertify.success('Выполнено');
+				setTimeout("document.location.href='http://game.lepus.su/'", 1500);
+				} else {
+				alertify.error(data);
+			}
+			return;
+		});
+	});
+	
+	$(document).on("click", "[data-change-settings]", function(e) {
+		e.preventDefault();
+		$(this).blur();
+		$('#ModalSettings').modal('show');
+	});
+	
 	$(document).on("click", "[data-server-cnf]", function(e) {
 		$(this).blur();
 		if(lock == 1) return;
