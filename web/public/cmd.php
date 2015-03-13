@@ -33,6 +33,7 @@ if($_POST['command'] == 'cnf'){
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['pass'])) die('er_pass');
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['rcon'])) die('er_rcon');
 	if(!is_numeric($_POST['addons'])) die('er_addons');
+	if(strlen($_POST['name']) > 15 || strlen($_POST['pass']) > 8 || strlen($_POST['rcon']) > 8) die('max length');
 	if(update_settings($_POST['name'], $_POST['pass'], $_POST['rcon'], $_POST['addons'], $_POST['user']) == 'OK'){
 		//if(strpos($_POST['name'],'by lepus.su') === FALSE) $_POST['name'] = $_POST['name'].'%20by%20lepus.su';
 		go_status($_POST['user'], time()+60*3);
