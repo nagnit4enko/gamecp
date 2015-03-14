@@ -21,20 +21,20 @@
 <div id="ModalSettings" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">Change password</h4>
-            </div>
-            <div id="modal_info" class="modal-body"><center>
-		  <p><input class="form-control input-sm" id="my_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="your old password"> </p>
-		  <p><input class="form-control input-sm" id="new_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="your new password"> </p>
-		  <p><input class="form-control input-sm" id="repeat_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="repeat new password"> </p>
-		</center></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-save-settings>Save changes</button>
-            </div>
-        </div>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">Изменить пароль</h4>
+			</div>
+			<div id="modal_info" class="modal-body"><center>
+				<p><input class="form-control input-sm" id="my_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="Старый пароль"> </p>
+				<p><input class="form-control input-sm" id="new_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="Новый пароль"> </p>
+				<p><input class="form-control input-sm" id="repeat_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="Повторите пароль"> </p></center>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-save-settings>Сохранить</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+			</div>
+		</div>
 	</div>
 </div>
 <div id="wrapper">
@@ -42,7 +42,7 @@
 	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="sr-only">Toggle navigation</span>
+				<span class="sr-only">Навигация</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -57,7 +57,7 @@
 					<i class="fa fa-caret-down"></i>
 				</a>
 			<ul class="dropdown-menu dropdown-user">
-				<li><a data-change-settings href="#settings" aria-controls="settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
+				<li><a data-change-settings href="#settings" aria-controls="settings"><i class="fa fa-gear fa-fw"></i> Изменить пароль</a></li>
 				<li class="divider"></li>
 				<li><a href="/?do=exit"><i class="fa fa-sign-out fa-fw"></i> Выход</a></li>
 			</ul>

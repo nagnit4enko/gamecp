@@ -14,7 +14,7 @@ $query->execute();
 if($query->rowCount() == 1) die("lock!");
 
 
-$commands = ["restart", "stop", "start", "log", "update-restart", "delete", "cnf", "addons"];
+$commands = ["restart", "stop", "start", "log", "update-restart", "delete", "cnf", "addons", "suspend", "unsuspend"];
 if (!in_array($_POST['command'], $commands)) die('er_command');
 
 if($_POST['command'] == 'delete'){
@@ -52,6 +52,16 @@ if($_POST['command'] == 'addons'){
 	}else{
 		die("error");
 	}
+}
+
+if($_POST['command'] == 'suspend'){
+	go_suspend($_POST['user'], 1);
+	$_POST['command'] = 'stop';
+}
+
+if($_POST['command'] == 'unsuspend'){
+	go_suspend($_POST['user'], 0);
+	$_POST['command'] = 'start';
 }
 
 go_status($_POST['user'], time()+60*3);

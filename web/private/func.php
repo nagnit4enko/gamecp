@@ -65,6 +65,25 @@ function go_status($name, $status){
 	return 'OK';
 }
 
+function go_suspend($name, $suspend){
+	global $db;
+	$query = $db->prepare("UPDATE `servers` SET `go_suspend` = :suspend WHERE `name` =:name");
+	$query->bindParam(':suspend', $suspend, PDO::PARAM_STR);
+	$query->bindParam(':name', $name, PDO::PARAM_STR);
+	$query->execute();
+	return 'OK';
+}
+
+function go_issuspended($name){
+	global $db;
+	$query = $db->prepare("SELECT * FROM `servers` WHERE `name` =:name AND `go_suspend` = 1");
+	$query->bindParam(':name', $name, PDO::PARAM_STR);
+	$query->execute();	
+	if($query->rowCount() == 1)
+		return 1;
+	else return 0;
+}
+
 function curl_query($link, $post){
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL,$link);

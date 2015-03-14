@@ -59,20 +59,20 @@
 <div id="ModalSettings" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">Change password</h4>
-            </div>
-            <div id="modal_info" class="modal-body"><center>
-		  <p><input class="form-control input-sm" id="my_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="your old password"> </p>
-		  <p><input class="form-control input-sm" id="new_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="your new password"> </p>
-		  <p><input class="form-control input-sm" id="repeat_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="repeat new password"> </p>
-		</center></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-save-settings>Save changes</button>
-            </div>
-        </div>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">Изменить пароль</h4>
+			</div>
+			<div id="modal_info" class="modal-body"><center>
+				<p><input class="form-control input-sm" id="my_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="Старый пароль"> </p>
+				<p><input class="form-control input-sm" id="new_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="Новый пароль"> </p>
+				<p><input class="form-control input-sm" id="repeat_password" style="display:inline; position:relative;top:2px;width:300px;" type="password" placeholder="Повторите пароль"> </p></center>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-save-settings>Сохранить</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+			</div>
+		</div>
 	</div>
 </div>
 <div id="wrapper">
@@ -90,7 +90,7 @@
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i></a>
 				<ul class="dropdown-menu dropdown-user">
-					<li><a data-change-settings href="#settings" aria-controls="settings"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
+					<li><a data-change-settings href="#settings" aria-controls="settings"><i class="fa fa-gear fa-fw"></i> Изменить пароль</a></li>
 					<li class="divider"></li>
 					<li><a href="/?do=exit"><i class="fa fa-sign-out fa-fw"></i> Выход</a></li>
 				</ul>
@@ -112,12 +112,13 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<h2 class="page-header">
-				<? if(isset($server_info['info']['HostName'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> '; else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
+				<? if(isset($server_info['info']['HostName'])) echo '<img src="img/online.png" style="margin-top:-4px" alt="online"> '; else if(go_issuspended($server_name) == 1) echo '<img src="img/block.png" style="margin-top:-4px" alt="block"> '; else echo '<img src="img/offline.png" style="margin-top:-4px" alt="offline"> ';
 				if(isset($server_info['info']['HostName'])) echo "<lu id=\"sname\">".strip_tags(str_replace(" by lepus.su", "", $server_info['info']['HostName']))."</lu>"; else echo "<lu id=\"sname\">".strip_tags($server['name'])."</lu>"; ?>
 				&nbsp;
-				<a data-server-restart="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-danger"><span class="glyphicon glyphicon-refresh"></span> Перезагрузить</a>
-				<a data-server-update="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Обновить сервер</a>
+				<a data-server-restart="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-danger <? if(go_issuspended($server_name) == 1) echo "disabled"; ?>"><span class="glyphicon glyphicon-refresh"></span> Перезагрузить</a>
+				<a data-server-update="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary <? if(go_issuspended($server_name) == 1) echo "disabled"; ?>"><span class="glyphicon glyphicon-download-alt"></span> Обновить сервер</a>
 				<? if($user['admin'] == 1) if(isset($server_info['info']['HostName'])) echo '&nbsp;<input data-server-stop='.$server_name.' type="submit" class="btn btn-default" value="Выключить">'; else echo '&nbsp;<input data-server-start='.$server_name.' type="submit" class="btn btn-default" value="Включить">'; ?>
+				<? if($user['admin'] == 1) if(go_issuspended($server_name) == 0) echo '<input data-server-suspend='.$server_name.' type="submit" class="btn btn-default" value="Заблокировать">'; else echo '<input data-server-unsuspend='.$server_name.' type="submit" class="btn btn-warning" value="Разблокировать">'; ?>
 				</h2>
 			</div>
 		</div>
@@ -133,7 +134,7 @@
 					<div class="panel-body">						
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Игра</span>
-							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? if(isset($server_info['info']['ModDesc'])) echo $server_info['info']['ModDesc']; else echo "сервер выключен"; ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? if(isset($server_info['info']['ModDesc'])) echo $server_info['info']['ModDesc']; else if(go_issuspended($server_name) == 1) echo "сервер заблокирован"; else echo "сервер выключен"; ?></span>
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Локация</span>
@@ -176,7 +177,7 @@
 				<div role="tabpanel" class="tab-pane fade" id="console">
 					<div class="panel-body">
 						<pre id="log_<? echo $server_name; ?>" style="max-height:580px;overflow:auto;"> <? echo $server_log; ?> </pre>
-						<a data-server-log="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary"><span class="glyphicon glyphicon-repeat"></span> Обновить</a>
+						<a data-server-log="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-primary <? if(go_issuspended($server_name) == 1) echo "disabled"; ?>"><span class="glyphicon glyphicon-repeat"></span> Обновить</a>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="config">
@@ -200,7 +201,7 @@
 							<option value="2" <? if($server['addons'] == 2) echo 'selected="selected"'; ?>>выключены</option>
 						</select>
 						</div></p>
-						<a data-server-cnf="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
+						<a data-server-cnf="<? echo $server_name; ?>" href="#" data-toggle="tab" class="btn btn-success <? if(go_issuspended($server_name) == 1) echo "disabled"; ?>"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="gotv">
@@ -411,6 +412,34 @@
 						var objDiv = document.getElementById(div_name);
 						objDiv.scrollTop = objDiv.scrollHeight;
 					alertify.success('Обновлено'); return;
+				}
+		});
+	});
+	
+	$(document).on("click", "[data-server-suspend]", function(e) {
+		$(this).blur();
+		$('#myModal').modal('show');
+		$("#modal_info").html("<center>Сервер замораживается.</center>");
+		$.post("http://"+document.domain+"/public/cmd.php", {command: 'suspend', user: $(this).data("server-suspend")}, function( data ){
+				$('#myModal').modal('hide');
+				if(data == 'OK'){
+					alertify.success('Выполнено'); return;
+				} else {
+					alertify.error(data); return;
+				}
+		});
+	});
+	
+		$(document).on("click", "[data-server-unsuspend]", function(e) {
+		$(this).blur();
+		$('#myModal').modal('show');
+		$("#modal_info").html("<center>Сервер размораживается.</center>");
+		$.post("http://"+document.domain+"/public/cmd.php", {command: 'unsuspend', user: $(this).data("server-unsuspend")}, function( data ){
+				$('#myModal').modal('hide');
+				if(data == 'OK'){
+					alertify.success('Выполнено'); return;
+				} else {
+					alertify.error(data); return;
 				}
 		});
 	});
