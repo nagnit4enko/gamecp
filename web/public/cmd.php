@@ -55,12 +55,12 @@ if($_POST['command'] == 'addons'){
 }
 
 if($_POST['command'] == 'suspend'){
-	go_suspend($_POST['user'], 1);
+	if(go_suspend($_POST['user'], 1) == 'error') die('error');
 	$_POST['command'] = 'stop';
 }
 
 if($_POST['command'] == 'unsuspend'){
-	go_suspend($_POST['user'], 0);
+	if(go_suspend($_POST['user'], 0) == 'error') die('error');
 	$_POST['command'] = 'start';
 }
 

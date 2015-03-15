@@ -58,7 +58,7 @@ function bytesToSize1000($bytes){
 
 function go_status($name, $status){
 	global $db;
-	$query = $db->prepare("UPDATE `servers` SET `go_status` = :status WHERE `name` =:name");
+	$query = $db->prepare("UPDATE `servers` SET `go_status` =:status WHERE `name` =:name");
 	$query->bindParam(':status', $status, PDO::PARAM_STR);
 	$query->bindParam(':name', $name, PDO::PARAM_STR);
 	$query->execute();
@@ -66,8 +66,9 @@ function go_status($name, $status){
 }
 
 function go_suspend($name, $suspend){
-	global $db;
-	$query = $db->prepare("UPDATE `servers` SET `go_suspend` = :suspend WHERE `name` =:name");
+	global $db, $user;
+	if($user['admin'] != 1) return 'error';
+	$query = $db->prepare("UPDATE `servers` SET `go_suspend` =:suspend WHERE `name` =:name");
 	$query->bindParam(':suspend', $suspend, PDO::PARAM_STR);
 	$query->bindParam(':name', $name, PDO::PARAM_STR);
 	$query->execute();
@@ -75,7 +76,8 @@ function go_suspend($name, $suspend){
 }
 
 function go_issuspended($name){
-	global $db;
+	global $db, $user;
+	if($user['admin'] != 1) return 'error';
 	$query = $db->prepare("SELECT * FROM `servers` WHERE `name` =:name AND `go_suspend` = 1");
 	$query->bindParam(':name', $name, PDO::PARAM_STR);
 	$query->execute();	
