@@ -11,7 +11,11 @@ if(preg_match('/[^0-9a-z]/', $_POST['user'])) die('er_user');
 $query = $db->prepare("SELECT * FROM `servers` WHERE `name` =:name AND `go_status` > UNIX_TIMESTAMP(NOW())");
 $query->bindParam(':name', $_POST['user'], PDO::PARAM_STR);
 $query->execute();	
+$row = $query->fetch();
 if($query->rowCount() == 1) die("lock!");
+
+if($user['admin'] != 1 && $row['go_suspend'] == 1) die('server block');
+unset($row);
 
 
 $commands = ["restart", "stop", "start", "log", "update-restart", "delete", "cnf", "addons", "suspend", "unsuspend"];
