@@ -64,7 +64,7 @@ $(document).keypress(function(event){
 			
 			if(data == "login"){
 				window.location.href = "/";
-			}else{
+			}else{ 
 				alertify.error(data); return;
 			}
 			

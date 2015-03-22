@@ -156,18 +156,25 @@ function csgo_info($ip, $port){
 	return $i;
 }
 
-function error($message){
+function error($message, $j = 0){
 	if(!is_array($message)){
 		$err = [
 			"no_auth" => "Неудачная попытка входа.",
 			"no_user" => "Неправильный логин.",
-			"bad_passwd" => "Неправильный пароль."
+			"bad_passwd" => "Неправильный пароль.",
+			"block_user" => "Пользователь заблокирован"
 		];
-		
-		if (array_key_exists($message, $err)){
-			die('error');
-		}
-	} else return $message;
+		if (array_key_exists($message, $err)) $j = 1;
+	}
+	
+	if($j == 1){
+		$message = ['mess' => $message, 'err' => $err[$message]];
+	}else{
+		$message = ['mess' => $message, 'err' => 'OK'];
+	}
+	
+	//var_dump($message); die();
+	return $message;
 }
 
 function auth($login, $session){
@@ -189,6 +196,7 @@ function auth($login, $session){
 	}
 	
 	$row = $query->fetch();
+	if($row['block'] == 1) return 'block_user';
 	return ["id" => $row['id'], "nginx_key" => $row['nginx_key'], "admin" => $row['admin'], "passwd" => $row['passwd']];
 }
 
@@ -201,6 +209,7 @@ function login($login, $passwd){
 	$row = $query->fetch();
 
 	if (password_verify($passwd, $row['passwd'])){
+		if($row['block'] == 1) return 'block_user';
 		$new_passwd = rehash($passwd, $row['passwd']);
 		$_SESSION['id'] = $row['id'];
 		$_SESSION['login'] = $login;
