@@ -1,4 +1,20 @@
 <?
+
+function status_user($id, $status){
+	global $db;
+	if($status != 0 && $status != 1) return "wrong status $status";
+	$query = $db->prepare("SELECT * FROM `users` WHERE `id` =:id");
+	$query->bindParam(':id', $id, PDO::PARAM_STR);
+	$query->execute();
+	if($query->rowCount() != 1) return 'error';
+	
+	$query = $db->prepare("UPDATE `users` SET `block` = :status WHERE `id` =:id");
+	$query->bindParam(':id', $id, PDO::PARAM_STR);
+	$query->bindParam(':status', $status, PDO::PARAM_STR);
+	$query->execute();
+	return 'OK';
+}
+
 function remove_xss($text){
 	$text = mb_convert_encoding($text, 'utf-8', mb_detect_encoding($text));
 	return htmlentities($text, ENT_QUOTES, "UTF-8");	
