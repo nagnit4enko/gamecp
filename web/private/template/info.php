@@ -6,7 +6,7 @@
 	$server = server_info($server_name);
 
 	$server_info = csgo_info($server['ip'], $server['port']);
-	$server_log = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=log", NULL);
+	$server_log = remove_xss(curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=log", NULL));
 	$server_cnf = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=cnf", NULL);
 	$menu = get_servers();
 	
@@ -188,11 +188,11 @@
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Пароль</span>
-							<input id="server_pass" type="text" maxlength="8" class="form-control" placeholder="sv_password" value="<? echo $server['passwd']; ?>" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_pass" type="text" maxlength="15" class="form-control" placeholder="sv_password" value="<? echo $server['passwd']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">RCON</span>
-							<input id="server_rcon" type="text" maxlength="8" class="form-control" placeholder="rcon_password" value="<? echo $server['rcon']; ?>" style="width:238px" aria-describedby="basic-addon1">
+							<input id="server_rcon" type="text" maxlength="15" class="form-control" placeholder="rcon_password" value="<? echo $server['rcon']; ?>" style="width:238px" aria-describedby="basic-addon1">
 						</div></p>
 						<p><div class="input-group">
 						<span class="input-group-addon" id="basic-addon1" style="width:96px">Плагины</span>
@@ -250,6 +250,7 @@
 <script src="/js/sb-admin-2.js"></script>
 <script src="/js/alertify.min.js"></script>
 <script src="/js/bootstrap-select.js"></script>
+<script src="/js/htmlentities.js"></script>
 <script>
 	var lock = 0;
 	
@@ -408,6 +409,7 @@
 				if(data == 'error'){
 					alertify.error('Ошибка'); return;
 				} else {
+					//$("#"+div_name).html(htmlentities(data, "ENT_NOQUOTES"));
 					$("#"+div_name).html(data);
 						var objDiv = document.getElementById(div_name);
 						objDiv.scrollTop = objDiv.scrollHeight;

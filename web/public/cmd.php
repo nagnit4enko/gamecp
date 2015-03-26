@@ -32,7 +32,7 @@ if($_POST['command'] == 'cnf'){
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['pass'])) die('er_pass');
 	if(preg_match('/[^0-9a-zA-Z_.-]/', $_POST['rcon'])) die('er_rcon');
 	if(!is_numeric($_POST['addons'])) die('er_addons');
-	if(strlen($_POST['name']) > 15 || strlen($_POST['pass']) > 8 || strlen($_POST['rcon']) > 8) die('max length');
+	if(strlen($_POST['name']) > 15 || strlen($_POST['pass']) > 15 || strlen($_POST['rcon']) > 15) die('max length');
 	if(update_settings($_POST['name'], $_POST['pass'], $_POST['rcon'], $_POST['addons'], $_POST['user']) == 'OK'){
 		//if(strpos($_POST['name'],'by lepus.su') === FALSE) $_POST['name'] = $_POST['name'].'%20by%20lepus.su';
 		go_status($_POST['user'], time()+60*3);
@@ -64,5 +64,5 @@ if($_POST['command'] == 'unsuspend'){
 }
 
 go_status($_POST['user'], time()+60*3);
-echo curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$_POST['user']}&cmd={$_POST['command']}", NULL);
+echo remove_xss(curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$_POST['user']}&cmd={$_POST['command']}", NULL));
 go_status($_POST['user'], 0);

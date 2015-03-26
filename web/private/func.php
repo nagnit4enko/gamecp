@@ -1,4 +1,9 @@
 <?
+function remove_xss($text){
+	$text = mb_convert_encoding($text, 'utf-8', mb_detect_encoding($text));
+	return htmlentities($text, ENT_QUOTES, "UTF-8");	
+}
+
 function update_settings($name, $pass, $rcon, $addons, $server){
 		global $db;
 		$name = urldecode($name);
@@ -77,7 +82,7 @@ function go_suspend($name, $suspend){
 
 function go_issuspended($name){
 	global $db, $user;
-	if($user['admin'] != 1) return 'error';
+//	if($user['admin'] != 1) return 'error';
 	$query = $db->prepare("SELECT * FROM `servers` WHERE `name` =:name AND `go_suspend` = 1");
 	$query->bindParam(':name', $name, PDO::PARAM_STR);
 	$query->execute();	
