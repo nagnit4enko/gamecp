@@ -134,7 +134,7 @@
 					<div class="panel-body">						
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Игра</span>
-							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? if(isset($server_info['info']['ModDesc'])) echo $server_info['info']['ModDesc']; else if(go_issuspended($server_name) == 1) echo "сервер заблокирован"; else echo "сервер выключен"; ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? if(isset($server_info['info']['ModDesc'])) echo remove_xss($server_info['info']['ModDesc']); else if(go_issuspended($server_name) == 1) echo "сервер заблокирован"; else echo "сервер выключен"; ?></span>
 						</div>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Локация</span>
@@ -142,11 +142,11 @@
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">IP</span>
-							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo "{$server['ip']}:{$server_info['info']['GamePort']}"; ?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? echo strip_tags("{$server['ip']}:{$server_info['info']['GamePort']}"); ?></span>
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">GOTV</span>
-							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? if(isset($server_info['info']['SpecPort'])) echo "{$server['ip']}:{$server_info['info']['SpecPort']}"; else echo "выключено";?></span>
+							<span class="form-control" style="width:238px" aria-describedby="basic-addon1"><? if(isset($server_info['info']['SpecPort'])) echo strip_tags("{$server['ip']}:{$server_info['info']['SpecPort']}"); else echo "выключено";?></span>
 						</div></p>
 						<p><div class="input-group">
 							<span class="input-group-addon" id="basic-addon1" style="width:96px">Карта</span>
@@ -170,7 +170,7 @@
 						</div></p>
 						<div class="panel panel-default" style="width:334px">
 							<div class="panel-heading" style="height:auto; padding: 6px 22px; color: #555;">Подключение</div>
-							<div class="panel-body" style="height:auto; padding: 6px 22px;"><a href="steam://connect/<? echo "{$server['ip']}:{$server['port']}/{$server['passwd']}"?>">connect <? echo "{$server['ip']}:{$server['port']}; password {$server['passwd']}"?></a></div>
+							<div class="panel-body" style="height:auto; padding: 6px 22px;"><a href="steam://connect/<? echo remove_xss("{$server['ip']}:{$server['port']}/{$server['passwd']}");?>">connect <? echo remove_xss("{$server['ip']}:{$server['port']}; password {$server['passwd']}");?></a></div>
 						</div>
 					</div>
 				</div>
