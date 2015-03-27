@@ -1,4 +1,21 @@
 <?
+function del_user(){
+	global $db; $uid = $_GET['uid'];
+	
+	if(!isset($uid)) return 'empty uid';
+	if(!is_numeric($uid)) return 'not int uid';
+	
+	$query = $db->prepare("SELECT * FROM `users` WHERE `id` =:id");
+	$query->bindParam(':id', $uid, PDO::PARAM_STR);
+	$query->execute();
+	if($query->rowCount() != 1) return 'error';
+	
+	$query = $db->prepare("DELETE FROM `users` WHERE `id` =:id");
+	$query->bindParam(':id', $uid, PDO::PARAM_STR);
+	$query->execute();
+	return 'OK';
+}
+
 function reg_user(){
 	global $db; $login = $_GET['login']; $hash = $_GET['hash'];
 	
