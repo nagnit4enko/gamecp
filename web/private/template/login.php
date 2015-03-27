@@ -39,6 +39,7 @@
 					</fieldset>
 				</div>
 			</div>
+			<center>powered by <a href="https://github.com/poiuty/gamecp" target="_blank">open source gamecp</a></center>
 		</div>
 	</div>
 </div>
