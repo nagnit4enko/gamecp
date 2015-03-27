@@ -8,6 +8,7 @@
 			$('#ModalAdd').modal('hide');
 			if(data == 'OK'){
 				alertify.success('Выполнено');
+				//setTimeout("document.location.href='"+data+"'", 1500);
 				} else {
 				alertify.error(data);
 			}
