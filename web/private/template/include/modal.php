@@ -49,8 +49,8 @@
 			</div>
 			<div id="modal_info" class="modal-body">
 				<center>
-					<select class="form-control">
-						<option>Counter-Strike: Global Offensive</option>
+					<select id="server_create_id" class="form-control">
+						<option value='1'>Counter-Strike: Global Offensive</option>
 					</select>
 				</center>
 			</div>

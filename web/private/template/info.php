@@ -12,6 +12,9 @@
 	
 	$server_demo = curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&user={$server_name}&cmd=gotv", NULL);
 	$demo_arr = json_decode($server_demo, true);
+	
+	//echo create_server();
+	//die();
  ?>
 <!DOCTYPE html>
 <html lang="en">

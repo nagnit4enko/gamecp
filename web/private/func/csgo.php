@@ -1,4 +1,24 @@
 <?
+
+function create_server($type){
+	global $db, $user;
+	if($user['admin'] != 1) return 'error';
+	
+	$query = $db->prepare("SELECT MAX(port) FROM `servers`");
+	$query->execute();
+	$get = $query->fetch();
+	$port = $get['MAX(port)']+1;
+	$settings = '{"name":"hostname test","passwd":"sv_password","rcon":"rcon_password","addons":"1"}';
+	
+	$query = $db->prepare("INSERT INTO `servers` (`type`, `user_id`, `ip`, `port`, `settings`) 
+							VALUES ('csgoserver', :id, '88.198.25.76', :port, :settings)");
+	$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
+	$query->bindParam(':port', $port, PDO::PARAM_STR);
+	$query->bindParam(':settings', $settings, PDO::PARAM_STR);
+	$query->execute();
+	return 'OK';
+}
+
 function get_servers(){
 	global $db, $user; $i = ''; $count = 0;
 	if($user['admin'] == 1){
@@ -23,7 +43,7 @@ function update_settings($name, $pass, $rcon, $addons, $server){
 		global $db;
 		$name = urldecode($name);
 		$arr = ["name" => $name, "passwd" => $pass, "rcon" => $rcon, "addons" => $addons];
-		$query = $db->prepare("UPDATE `servers` SET `settings` = :settings WHERE `name` = :server");
+		$query = $db->prepare("UPDATE `servers` SET `settings` = :settings WHERE `id` = :server");
 		$query->bindParam(':settings', json_encode($arr), PDO::PARAM_STR);
 		$query->bindParam(':server', $server, PDO::PARAM_STR);
 		$query->execute();

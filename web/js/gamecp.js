@@ -1,10 +1,24 @@
 	var lock = 0;
 	
+	$(document).on("click", "[data-server-create]", function(e) {
+		$(this).blur();
+		e.preventDefault();
+		cid = $('select[id=server_create_id]').val();
+		$.post("http://"+document.domain+"/public/create_server.php", {cid: cid}, function( data ){
+			$('#ModalAdd').modal('hide');
+			if(data == 'OK'){
+				alertify.success('Выполнено');
+				} else {
+				alertify.error(data);
+			}
+			return;
+		});
+	});	
+	
 	$(document).on("click", "[data-add-server]", function(e) {
 		$(this).blur();
 		e.preventDefault();
 		$('#ModalAdd').modal('show');
-
 	});
 	
 	$(document).on("click", "[data-save-settings]", function(e) {
