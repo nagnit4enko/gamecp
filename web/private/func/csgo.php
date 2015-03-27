@@ -11,8 +11,8 @@ function get_servers(){
 	$query->execute();
 	if($query->rowCount() > 0){
 		while($row=$query->fetch()){
-			$server = server_info($row['name']);
-			$i = $i."<li><a href=\"/index.php?do=info&server=".urlencode(base64_encode($row['name']))."\">".$server['name']."<br/><small>{$row['ip']}:{$row['port']}</small></a></li>";
+			$server = server_info($row['id']);
+			$i = $i."<li><a href=\"/index.php?do=info&server=".urlencode(base64_encode($row['id']))."\">".$server['name']."<br/><small>{$row['ip']}:{$row['port']}</small></a></li>";
 			$count++;
 		}
 	}
@@ -33,8 +33,8 @@ function update_settings($name, $pass, $rcon, $addons, $server){
 function nginx_link($server, $file){
 	global $db, $user;
 	if($user['admin'] == 1){
-		$query = $db->prepare("SELECT * FROM `servers` WHERE `name` =:name");
-		$query->bindParam(':name', $server, PDO::PARAM_STR);
+		$query = $db->prepare("SELECT * FROM `servers` WHERE `id` =:id");
+		$query->bindParam(':id', $server, PDO::PARAM_STR);
 		$query->execute();
 		$row = $query->fetch();
 		
@@ -46,42 +46,42 @@ function nginx_link($server, $file){
 		$user['nginx_key'] = $row['nginx_key'];
 	}
 	$domain = 'http://game.lepus.su';
-	$dir = "/gotv/$server/";
+	$dir = "/gotv/csgoserver$server/";
 	$time = time()+60*60*24;
 	$key = str_replace("=", "", strtr(base64_encode(md5($time.$dir.$file.getenv("REMOTE_ADDR")." {$user['nginx_key']}", TRUE)), "+/", "-_"));
 	return htmlspecialchars($domain.$dir.$file."?hash=$key&time=$time");
 }
 
-function go_suspend($name, $suspend){
+function go_suspend($id, $suspend){
 	global $db, $user;
 	if($user['admin'] != 1) return 'error';
-	$query = $db->prepare("UPDATE `servers` SET `go_suspend` =:suspend WHERE `name` =:name");
+	$query = $db->prepare("UPDATE `servers` SET `go_suspend` =:suspend WHERE `id` =:id");
 	$query->bindParam(':suspend', $suspend, PDO::PARAM_STR);
-	$query->bindParam(':name', $name, PDO::PARAM_STR);
+	$query->bindParam(':id', $id, PDO::PARAM_STR);
 	$query->execute();
 	return 'OK';
 }
 
-function go_issuspended($name){
+function go_issuspended($id){
 	global $db, $user;
 //	if($user['admin'] != 1) return 'error';
-	$query = $db->prepare("SELECT * FROM `servers` WHERE `name` =:name AND `go_suspend` = 1");
-	$query->bindParam(':name', $name, PDO::PARAM_STR);
+	$query = $db->prepare("SELECT * FROM `servers` WHERE `id` =:id AND `go_suspend` = 1");
+	$query->bindParam(':id', $id, PDO::PARAM_STR);
 	$query->execute();	
 	if($query->rowCount() == 1)
 		return 1;
 	else return 0;
 }
 
-function get_access($name){
+function get_access($id){
 	global $db, $user;
 	if($user['admin'] == '1'){
-		$query = $db->prepare("SELECT * FROM `servers` WHERE `name` = :name");
-		$query->bindParam(':name', $name, PDO::PARAM_STR);
+		$query = $db->prepare("SELECT * FROM `servers` WHERE `id` = :id");
+		$query->bindParam(':id', $id, PDO::PARAM_STR);
 	}else{
-		$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :id AND `name` = :name");
-		$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
-		$query->bindParam(':name', $name, PDO::PARAM_STR);
+		$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :uid AND `id` = :id");
+		$query->bindParam(':uid', $user['id'], PDO::PARAM_STR);
+		$query->bindParam(':id', $id, PDO::PARAM_STR);
 	}
 	
 	$query->execute();
@@ -93,17 +93,17 @@ function get_access($name){
 	return $i;
 }
 
-function go_status($name, $status){
+function go_status($id, $status){
 	global $db;
-	$query = $db->prepare("UPDATE `servers` SET `go_status` =:status WHERE `name` =:name");
+	$query = $db->prepare("UPDATE `servers` SET `go_status` =:status WHERE `id` =:id");
 	$query->bindParam(':status', $status, PDO::PARAM_STR);
-	$query->bindParam(':name', $name, PDO::PARAM_STR);
+	$query->bindParam(':id', $id, PDO::PARAM_STR);
 	$query->execute();
 	return 'OK';
 }
 
-function server_info($name){
-	$row = get_access($name);
+function server_info($id){
+	$row = get_access($id);
 	if(!$row["accsess"]) die("no_accsess");
 	if(!empty($row['data']['settings'])){
 		$j = json_decode($row['data']['settings'], true);

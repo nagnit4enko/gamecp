@@ -59,7 +59,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			return
 				
 		case "csgo":
-			USER = r.URL.Query().Get("user")
+			USER = "csgoserver"+r.URL.Query().Get("user")
 			if len(USER) == 0 {
 				fmt.Fprintf(w, "No user")
 				return
