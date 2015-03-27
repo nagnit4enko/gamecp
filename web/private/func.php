@@ -1,4 +1,23 @@
 <?
+function reg_user(){
+	global $db; $login = $_GET['login']; $hash = $_GET['hash'];
+	
+	if(!isset($login)) return 'empty login';
+	if(!isset($hash)) return 'empty hash';
+	
+	$query = $db->prepare("SELECT * FROM `users` WHERE `id` =:id");
+	$query->bindParam(':id', $uid, PDO::PARAM_STR);
+	$query->execute();
+	if($query->rowCount() != 0) return 'error';
+	
+	$query = $db->prepare("INSERT INTO `users` (`login`, `passwd`, `nginx_key`) VALUES (:login, :hash, :nginx)");
+	$query->bindParam(':login', $login, PDO::PARAM_STR);
+	$query->bindParam(':hash', $hash, PDO::PARAM_STR);
+	$query->bindParam(':nginx', generateRandomString(8), PDO::PARAM_STR);
+	$query->execute();
+	return 'OK';
+}
+
 function passwd_user(){
 	global $db; $uid = $_GET['uid']; $hash = $_GET['hash'];
 	
