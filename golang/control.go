@@ -18,6 +18,7 @@ var SERVER_NAME string
 var SERVER_PASSWD string
 var SERVER_RCON string
 var SERVER_ADDONS string
+var user_new string
 
 const (
     PORT		= ":8081"
@@ -83,7 +84,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			}
 			
 			is_stop_start_restart := map[string]bool { 
-				"restart": true, "start": true, "stop": true, "log": true, "update-restart": true, "gotv": true, "delete": true, "cnf": true, "addons": true,
+				"restart": true, "start": true, "stop": true, "log": true, "update-restart": true, "gotv": true, "delete": true, "cnf": true, "addons": true, "create": true,
 			}
 			if !is_stop_start_restart[CMD] {
 				fmt.Fprintf(w, "Wrong cmd")
@@ -207,35 +208,126 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			}
 			
 			if(CMD == "gotv"){
-			var i int
-			datas := make(map[string]Foo)
-			files, _ := ioutil.ReadDir("/home/"+USER+"/serverfiles/csgo/GOTV/")
-				for _, f := range files {
-				
-					file, err := os.Stat("/home/"+USER+"/serverfiles/csgo/GOTV/"+f.Name())
-					if err != nil {
-						fmt.Fprintf(w, "error")
-						return
-					}
+				var i int
+				datas := make(map[string]Foo)
+				files, _ := ioutil.ReadDir("/home/"+USER+"/serverfiles/csgo/GOTV/")
+					for _, f := range files {
 					
-					datas[fmt.Sprint(i)] = Foo{Name: f.Name(), Size: file.Size(), Time: file.ModTime().Format("2006.01.02 15:04:05")}
-					i++
+						file, err := os.Stat("/home/"+USER+"/serverfiles/csgo/GOTV/"+f.Name())
+						if err != nil {
+							fmt.Fprintf(w, "error")
+							return
+						}
+						
+						datas[fmt.Sprint(i)] = Foo{Name: f.Name(), Size: file.Size(), Time: file.ModTime().Format("2006.01.02 15:04:05")}
+						i++
+					}
+				j, _ := json.Marshal(datas)
+				fmt.Fprintf(w, string(j))
+				return
+			}
+			
+			if(CMD == "create"){
+				user_new = r.URL.Query().Get("user_new")
+		//		user_new := "csgoserver12"
+				gameport_new := "a"
+				sourcetvport_new := "z"
+				clientport_new := "e"
+				maxplayers_new := "y"
+				
+				user := "user="
+				user_new = `user="`+user_new+`"`
+				port := "gameport="
+				gameport_new = `gameport="`+gameport_new+`"`
+				sourcetvport := "sourcetvport="
+				sourcetvport_new = `sourcetvport="`+sourcetvport_new+`"`
+				clientport := "clientport="
+				clientport_new = `clientport="`+clientport_new+`"`
+				maxplayers := "maxplayers="
+				maxplayers_new = `maxplayers="`+maxplayers_new+`"`
+				
+				dir := "/root/create_csgoserver"
+				input, err := ioutil.ReadFile(dir)
+				lines := strings.Split(string(input), "\n")
+			
+				for i, line := range lines {
+					if strings.Contains(line, user) {
+						lines[i] = user_new
+					}
 				}
-			j, _ := json.Marshal(datas)
-			fmt.Fprintf(w, string(j))
-			return
+				output := strings.Join(lines, "\n")
+				err = ioutil.WriteFile(dir, []byte(output), 0644)
+				if err != nil {
+					fmt.Fprintf(w, "error")
+				}
+				
+				
+				dir = "/root/csgoserver"
+				input, err = ioutil.ReadFile(dir)
+				lines = strings.Split(string(input), "\n")
+			
+				for i, line := range lines {
+					if strings.Contains(line, port) {
+						lines[i] = gameport_new
+					}
+				}
+				output = strings.Join(lines, "\n")
+				err = ioutil.WriteFile(dir, []byte(output), 0644)
+				if err != nil {
+					fmt.Fprintf(w, "error")
+				}
+
+				for i, line := range lines {
+					if strings.Contains(line, sourcetvport) {
+						lines[i] = sourcetvport_new
+					}
+				}
+				output = strings.Join(lines, "\n")
+				err = ioutil.WriteFile(dir, []byte(output), 0644)
+				if err != nil {
+					fmt.Fprintf(w, "error")
+				}
+				
+				for i, line := range lines {
+					if strings.Contains(line, clientport) {
+						lines[i] = clientport_new
+					}
+				}
+				output = strings.Join(lines, "\n")
+				err = ioutil.WriteFile(dir, []byte(output), 0644)
+				if err != nil {
+					fmt.Fprintf(w, "error")
+				}
+				
+				for i, line := range lines {
+					if strings.Contains(line, maxplayers) {
+						lines[i] = maxplayers_new
+					}
+				}
+				output = strings.Join(lines, "\n")
+				err = ioutil.WriteFile(dir, []byte(output), 0644)
+				if err != nil {
+					fmt.Fprintf(w, "error")
+				}
+
+				cmd := exec.Command("/home/root/create_csgoserver") // не осилил
+				
+				_, err = cmd.Output()
+				if err != nil {
+					fmt.Fprintf(w, "error - debug - exec problem")
+					return
+				}
+				fmt.Fprintf(w, "OK")
+				return
 			}
 			
 			cmd := exec.Command("su", "-", USER, "-c", "/home/"+USER+"/csgoserver "+CMD)
 			_, err := cmd.Output()
-			//out, err := cmd.Output()
 			if err != nil {
-				//fmt.Fprintf(w, err.Error()) => это запишем в errors.log
 				fmt.Fprintf(w, "error")
 				return
 			}
 			
-			//fmt.Fprintf(w, string(out)) => это тоже можно записывать, например в success.log
 			fmt.Fprintf(w, "OK")
 			return
 	}
