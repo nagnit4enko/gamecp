@@ -1,19 +1,26 @@
 <?
 
-function create_server($type){
+function create_server($type, $maxplayers){
 	global $db, $user;
 	if($user['admin'] != 1) return 'error';
 	
-	$query = $db->prepare("SELECT MAX(port) FROM `servers`");
+	$query = $db->prepare("SELECT MAX(id), MAX(port), MAX(tvport), MAX(clport) FROM `servers`");
 	$query->execute();
 	$get = $query->fetch();
+	$id = $get['MAX(id)']+1;
 	$port = $get['MAX(port)']+1;
-	$settings = '{"name":"hostname test","passwd":"sv_password","rcon":"rcon_password","addons":"1"}';
+	$tvport = $get['MAX(tvport)']+1;
+	$clport = $get['MAX(clport)']+1;
+	$settings = '{"name":"hostname","passwd":"sv_password","rcon":"rcon_password","addons":"1"}';
 	
-	$query = $db->prepare("INSERT INTO `servers` (`type`, `user_id`, `ip`, `port`, `settings`) 
-							VALUES ('csgoserver', :id, '88.198.25.76', :port, :settings)");
-	$query->bindParam(':id', $user['id'], PDO::PARAM_STR);
+	$query = $db->prepare("INSERT INTO `servers` (`type`, `id`, `user_id`, `ip`, `port`, `tvport`, `clport`, `maxplayers`, `settings`) 
+							VALUES ('csgoserver', :id, :userid, '88.198.25.76', :port, :tvport, :clport, :maxplayers, :settings)");
+	$query->bindParam(':id', $id, PDO::PARAM_STR);
+	$query->bindParam(':userid', $user['id'], PDO::PARAM_STR);
 	$query->bindParam(':port', $port, PDO::PARAM_STR);
+	$query->bindParam(':tvport', $tvport, PDO::PARAM_STR);
+	$query->bindParam(':clport', $clport, PDO::PARAM_STR);
+	$query->bindParam(':maxplayers', $maxplayers, PDO::PARAM_STR);
 	$query->bindParam(':settings', $settings, PDO::PARAM_STR);
 	$query->execute();
 	return 'OK';

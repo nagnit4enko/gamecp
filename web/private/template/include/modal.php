@@ -48,11 +48,15 @@
 				<h4 class="modal-title">Добавить сервер</h4>
 			</div>
 			<div id="modal_info" class="modal-body">
-				<center>
+				<p>
 					<select id="server_create_id" class="form-control">
-						<option value='1'>Counter-Strike: Global Offensive</option>
+					<option value='1'>Counter-Strike: Global Offensive</option>
 					</select>
-				</center>
+				</p>
+				
+				<p>
+					Слоты на сервере<input class="form-control input" id="server_maxplayers" value="12" placeholder="Maxplayers">	
+				</p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary" data-server-create>Создать</button>

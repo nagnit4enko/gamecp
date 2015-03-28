@@ -54,6 +54,13 @@ if($_POST['command'] == 'addons'){
 	}
 }
 
+if($_POST['command'] == 'create'){
+	if(curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&cmd={$_POST['command']}&user_new={$_POST['user_new']}", NULL) == 'OK'){
+	}else{
+		die("error");
+	}
+}
+
 if($_POST['command'] == 'suspend'){
 	if(go_suspend($_POST['user'], 1) == 'error') die('error');
 	$_POST['command'] = 'stop';

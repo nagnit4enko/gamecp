@@ -22,7 +22,7 @@
 			<div class="sidebar-nav navbar-collapse">
 				<ul class="nav" id="side-menu">
 					<li><a href="/index.php?do=default"><i class="fa fa-newspaper-o fa-fw"></i> Новости</a></li>
-					<li><a data-add-server href="#addserver"><i class="fa fa-wrench fa-fw"></i> Новый сервер</a></li>
+					<? if($user['admin'] == 1) echo '<li><a data-add-server href="#addserver"><i class="fa fa-wrench fa-fw"></i> Новый сервер</a></li>'; ?>
 					<li>
 						<? if($menu[1] > 1) echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервера<span class="fa arrow"></span></a>'; else echo '<a href="#"><i class="fa fa-desktop"></i> CS:GO Сервер<span class="fa arrow"></span></a>'; ?>
 						<ul class="nav nav-second-level"><? echo $menu[0]; ?></ul>

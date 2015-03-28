@@ -4,7 +4,9 @@
 		$(this).blur();
 		e.preventDefault();
 		cid = $('select[id=server_create_id]').val();
-		$.post("http://"+document.domain+"/public/create_server.php", {cid: cid}, function( data ){
+		maxplayers = $('input[id=server_maxplayers]').val();
+		$.post("http://"+document.domain+"/public/create_server.php", {cid: cid, maxplayers: maxplayers }, function( data ){
+			$("#server_maxplayers").val('');;
 			$('#ModalAdd').modal('hide');
 			if(data == 'OK'){
 				alertify.success('Выполнено');

@@ -12,4 +12,4 @@ $row = $query->fetch();
 $arr = json_decode($row['key'], true);
 if(!in_array("csgoserver", $arr)) die('error');
 
-echo create_server($_POST['cid']);
+echo create_server($_POST['cid'], $_POST['maxplayers']);
