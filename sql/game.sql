@@ -4,26 +4,33 @@ CREATE TABLE IF NOT EXISTS `params` (
   `key` varchar(1024) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+
 CREATE TABLE IF NOT EXISTS `servers` (
 `id` int(11) NOT NULL,
   `type` varchar(128) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `ip` varchar(128) NOT NULL,
   `port` int(11) NOT NULL,
+  `tvport` int(11) NOT NULL,
+  `clport` int(11) NOT NULL,
+  `maxplayers` int(11) NOT NULL,
   `settings` varchar(256) DEFAULT NULL,
   `go_status` int(11) NOT NULL DEFAULT '0',
   `go_suspend` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+
 CREATE TABLE IF NOT EXISTS `users` (
 `id` int(11) NOT NULL,
   `login` varchar(128) NOT NULL,
   `passwd` varchar(128) NOT NULL,
+  `access` varchar(1024) DEFAULT NULL,
   `session` varchar(128) DEFAULT NULL,
   `nginx_key` varchar(128) DEFAULT NULL,
   `block` int(11) NOT NULL DEFAULT '0',
   `admin` int(11) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 
 ALTER TABLE `params`
  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `name` (`name`);
