@@ -4,6 +4,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/private/init/mysql.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/private/func/main.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/private/func/csgo.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/private/auth.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/private/sess.php');
 
 $query = $db->prepare("SELECT * FROM `params` WHERE `name` = 'server_types'");
 $query->execute();
