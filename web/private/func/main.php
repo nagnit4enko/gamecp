@@ -79,7 +79,7 @@ function auth($login, $session){
 	
 	$row = $query->fetch();
 	if($row['block'] == 1) return 'block_user';
-	return ["id" => $row['id'], "nginx_key" => $row['nginx_key'], "admin" => $row['admin'], "passwd" => $row['passwd']];
+	return ["id" => $row['id'], "nginx_key" => $row['nginx_key'], "admin" => $row['admin'], "passwd" => $row['passwd'], "access" => $row['access']];
 }
 
 function login($login, $passwd){

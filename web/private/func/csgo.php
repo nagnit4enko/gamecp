@@ -1,7 +1,28 @@
 <?
+function create_access($type, $maxplayers){
+	global $db, $user;
+	$access = json_decode($user['access'], true);
+	
+	if(empty($access[$type])) return 'error';
+	
+	$query = $db->prepare("SELECT * FROM `servers` WHERE `user_id` = :uid");
+	$query->bindParam(':uid', $user['id'], PDO::PARAM_STR);
+	$query->execute();
+	if($query->rowCount()+1 >  $access[$type][0]) return 'limit servers'; // count servers
+	
+	$query = $db->prepare("SELECT SUM(maxplayers) FROM `servers` WHERE `user_id` = :uid");
+	$query->bindParam(':uid', $user['id'], PDO::PARAM_STR);
+	$query->execute();
+	if($query->rowCount() == 1){
+		$row = $query->fetch();
+		if($row['SUM(maxplayers)']+$maxplayers > $access[$type][1]) return 'limit maxplayers';
+	}
+	return 'OK';
+}
 
 function create_server($type, $maxplayers){
 	global $db, $user;
+	die('lolka!');
 	if($user['admin'] != 1) return 'error';
 	
 	$query = $db->prepare("SELECT MAX(id), MAX(port), MAX(tvport), MAX(clport) FROM `servers`");
