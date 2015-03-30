@@ -6,17 +6,14 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/private/func/csgo.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/private/auth.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/private/sess.php');
 
+if(!isset($_POST['cid']) || !isset($_POST['maxplayers'])) die('empty post data');
+if(!is_numeric($_POST['cid']) || !is_numeric($_POST['maxplayers'])) die('only int');
+
 $query = $db->prepare("SELECT * FROM `params` WHERE `name` = 'server_types'");
 $query->execute();
 $row = $query->fetch();
 
-// Проверяем есть ли такой тип сервера
 $arr = json_decode($row['key'], true);
-if(empty($arr[$_GET['cid']])) die('error');
-echo create_access($arr[$_GET['cid']], 25);
-
-//var_dump($arr);
-
-//if(!in_array("csgoserver", $arr)) die('error');
-
-//echo create_server($_POST['cid'], $_POST['maxplayers']);
+if(empty($arr[$_POST['cid']])) die('error');
+if(create_access($arr[$_POST['cid']], (int) $_POST['maxplayers']) != 'OK') die('error');
+echo create_server($arr[$_POST['cid']], $_POST['maxplayers']);
