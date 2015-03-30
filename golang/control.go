@@ -4,6 +4,8 @@ import(
 	"fmt"
 	"regexp"
 	"os/exec"
+	"os/user"
+	"strconv"
 	"strings"
 	"net/http"
 	"io/ioutil"
@@ -228,98 +230,97 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			}
 			
 			if(CMD == "create"){
-				user_new = r.URL.Query().Get("user_new")
-		//		user_new := "csgoserver12"
-				gameport_new := "a"
-				sourcetvport_new := "z"
-				clientport_new := "e"
-				maxplayers_new := "y"
-				
-				user := "user="
-				user_new = `user="`+user_new+`"`
-				port := "gameport="
-				gameport_new = `gameport="`+gameport_new+`"`
-				sourcetvport := "sourcetvport="
-				sourcetvport_new = `sourcetvport="`+sourcetvport_new+`"`
-				clientport := "clientport="
-				clientport_new = `clientport="`+clientport_new+`"`
-				maxplayers := "maxplayers="
-				maxplayers_new = `maxplayers="`+maxplayers_new+`"`
-				
-				dir := "/root/create_csgoserver"
-				input, err := ioutil.ReadFile(dir)
-				lines := strings.Split(string(input), "\n")
+				MAX := r.URL.Query().Get("MAX")
+				GPORT := r.URL.Query().Get("GPORT")
+				SPORT := r.URL.Query().Get("SPORT")
+				CPORT := r.URL.Query().Get("CPORT")
+				re := regexp.MustCompile("^[0-9]*$")
 			
-				for i, line := range lines {
-					if strings.Contains(line, user) {
-						lines[i] = user_new
-					}
-				}
-				output := strings.Join(lines, "\n")
-				err = ioutil.WriteFile(dir, []byte(output), 0644)
-				if err != nil {
-					fmt.Fprintf(w, "error")
-				}
-				
-				
-				dir = "/root/csgoserver"
-				input, err = ioutil.ReadFile(dir)
-				lines = strings.Split(string(input), "\n")
-			
-				for i, line := range lines {
-					if strings.Contains(line, port) {
-						lines[i] = gameport_new
-					}
-				}
-				output = strings.Join(lines, "\n")
-				err = ioutil.WriteFile(dir, []byte(output), 0644)
-				if err != nil {
-					fmt.Fprintf(w, "error")
-				}
-
-				for i, line := range lines {
-					if strings.Contains(line, sourcetvport) {
-						lines[i] = sourcetvport_new
-					}
-				}
-				output = strings.Join(lines, "\n")
-				err = ioutil.WriteFile(dir, []byte(output), 0644)
-				if err != nil {
-					fmt.Fprintf(w, "error")
-				}
-				
-				for i, line := range lines {
-					if strings.Contains(line, clientport) {
-						lines[i] = clientport_new
-					}
-				}
-				output = strings.Join(lines, "\n")
-				err = ioutil.WriteFile(dir, []byte(output), 0644)
-				if err != nil {
-					fmt.Fprintf(w, "error")
-				}
-				
-				for i, line := range lines {
-					if strings.Contains(line, maxplayers) {
-						lines[i] = maxplayers_new
-					}
-				}
-				output = strings.Join(lines, "\n")
-				err = ioutil.WriteFile(dir, []byte(output), 0644)
-				if err != nil {
-					fmt.Fprintf(w, "error")
-				}
-
-				cmd := exec.Command("/home/root/create_csgoserver") // не осилил
-				
-				_, err = cmd.Output()
-				if err != nil {
-					fmt.Fprintf(w, "error - debug - exec problem")
+				// Проверка на пустоту
+				if len(GPORT) == 0 {
+					fmt.Fprintf(w, "empty game port")
 					return
 				}
-				fmt.Fprintf(w, "OK")
+				if len(SPORT) == 0 {
+					fmt.Fprintf(w, "empty sourcetv port")
+					return
+				}
+				if len(CPORT) == 0 {
+					fmt.Fprintf(w, "empty client port")
+					return
+				}
+				
+				// Проверка на символы
+				if(re.MatchString(GPORT) == false){
+					fmt.Fprintf(w, "wrong game port name")
+					return
+				}
+				if(re.MatchString(SPORT) == false){
+					fmt.Fprintf(w, "wrong sourcetv port name")
+					return
+				}
+				if(re.MatchString(CPORT) == false){
+					fmt.Fprintf(w, "wrong client port name")
+					return
+				}
+				
+				out, err := exec.Command("adduser", "--disabled-login", USER).Output()
+				if err != nil{ 
+					fmt.Fprintf(w, "error")
+				}
+		
+				out, err = exec.Command("cp", "/root/csgoserver", "/home/"+USER+"/csgoserver").Output()
+				if err != nil{ 
+					fmt.Fprintf(w, "error")
+				}
+		
+				out, err = ioutil.ReadFile("/home/"+USER+"/csgoserver")
+				if err != nil {
+					fmt.Fprintf(w, "error")
+					return
+				}
+					
+				lines := strings.Split(string(out), "\n")
+				for i, line := range lines {
+					if strings.Contains(line, "maxplayers=") {
+					lines[i] = `maxplayers="`+MAX+`"`
+					}
+					if strings.Contains(line, "gameport=") {
+						lines[i] = `gameport="`+GPORT+`"`
+					}
+					if strings.Contains(line, "sourcetvport=") {
+						lines[i] = `sourcetvport="`+SPORT+`"`
+					}
+					if strings.Contains(line, "clientport=") {
+							lines[i] = `clientport="`+CPORT+`"`
+					}
+				}
+		
+				output := strings.Join(lines, "\n")
+				err = ioutil.WriteFile("/home/"+USER+"/csgoserver", []byte(output), 0644)
+				if err != nil {
+					fmt.Fprintf(w, "error")
+				}
+		
+				usr, err := user.Lookup(USER)
+				if err != nil {
+					fmt.Fprintf(w, "error")
+				}
+		
+				UID, _ := strconv.Atoi(usr.Uid)
+				GID, _ := strconv.Atoi(usr.Gid) 
+		
+				err = os.Chown("/home/"+USER+"/csgoserver", UID, GID)
+				if err != nil{ 
+					fmt.Fprintf(w, "error")
+				}
+		
+				//CMD := "/home/"+USER+"/csgoserver auto-install"
+				//out, err = exec.Command("su", "-", USER, "-c", CMD).Output()
+				// тут сделать CP + update.
 				return
 			}
+
 			
 			cmd := exec.Command("su", "-", USER, "-c", "/home/"+USER+"/csgoserver "+CMD)
 			_, err := cmd.Output()
