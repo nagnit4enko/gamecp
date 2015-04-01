@@ -267,11 +267,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				out, err := exec.Command("adduser", "--disabled-login", USER).Output()
 				if err != nil{ 
 					fmt.Fprintf(w, "error")
+					return
 				}
 		
-				out, err = exec.Command("cp", "/root/csgoserver", "/home/"+USER+"/csgoserver").Output()
+				out, err = exec.Command("cp", "/root/install/csgoserver", "/home/"+USER+"/csgoserver").Output()
 				if err != nil{ 
 					fmt.Fprintf(w, "error")
+					return
 				}
 		
 				out, err = ioutil.ReadFile("/home/"+USER+"/csgoserver")
@@ -295,16 +297,44 @@ func handler(w http.ResponseWriter, r *http.Request) {
 							lines[i] = `clientport="`+CPORT+`"`
 					}
 				}
-		
+				
 				output := strings.Join(lines, "\n")
 				err = ioutil.WriteFile("/home/"+USER+"/csgoserver", []byte(output), 0644)
 				if err != nil {
 					fmt.Fprintf(w, "error")
+					return
+				}
+				
+				out, err = exec.Command("cp", "/root/install/copy.sh", "/home/"+USER+"/copy.sh").Output()
+				if err != nil{ 
+					fmt.Fprintf(w, "error")
+					return
+				}
+				
+				out, err = ioutil.ReadFile("/home/"+USER+"/copy.sh")
+				if err != nil {
+					fmt.Fprintf(w, "error")
+					return
+				}
+				
+				lines = strings.Split(string(out), "\n")
+				for i, line := range lines {
+					if strings.Contains(line, "DIR=") {
+					lines[i] = `DIR="/home/`+USER+`"`
+					}
+				}
+				
+				output = strings.Join(lines, "\n")
+				err = ioutil.WriteFile("/home/"+USER+"/copy.sh", []byte(output), 0644)
+				if err != nil {
+					fmt.Fprintf(w, "error")
+					return
 				}
 		
 				usr, err := user.Lookup(USER)
 				if err != nil {
 					fmt.Fprintf(w, "error")
+					return
 				}
 		
 				UID, _ := strconv.Atoi(usr.Uid)
@@ -313,15 +343,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				err = os.Chown("/home/"+USER+"/csgoserver", UID, GID)
 				if err != nil{ 
 					fmt.Fprintf(w, "error")
+					return
 				}
-		
-				//CMD := "/home/"+USER+"/csgoserver auto-install"
-				//out, err = exec.Command("su", "-", USER, "-c", CMD).Output()
-				// тут сделать CP + update.
+				
+				err = os.Chown("/home/"+USER+"/copy.sh", UID, GID)
+				if err != nil{ 
+					fmt.Fprintf(w, "error")
+					return
+				}
+				
+				out, err = exec.Command("/home/"+USER+"/copy.sh").Output()				
+				CMD := "/home/"+USER+"/csgoserver update-restart"
+				out, err = exec.Command("su", "-", USER, "-c", CMD).Output()
 				return
 			}
-
-			
+		
 			cmd := exec.Command("su", "-", USER, "-c", "/home/"+USER+"/csgoserver "+CMD)
 			_, err := cmd.Output()
 			if err != nil {
