@@ -21,7 +21,7 @@ function create_access($type, $maxplayers){
 }
 
 function create_server($type, $maxplayers){
-	global $db, $user;
+	global $db, $user, $conf;
 	$port = 27015; $tvport = 28015; $clport = 29015;
 	$settings = '{"name":"hostname","passwd":"sv_password","rcon":"rcon_password","addons":"1"}';
 	
@@ -44,6 +44,8 @@ function create_server($type, $maxplayers){
 	$query->bindParam(':maxplayers', $maxplayers, PDO::PARAM_STR);
 	$query->bindParam(':settings', $settings, PDO::PARAM_STR);
 	$query->execute();
+	
+	curl_query("https://game.lepus.su:8081/?key={$conf['go_key']}&command=csgo&cmd=create&user=".$db->lastInsertId()."&MAX={$maxplayers}&GPORT={$port}&SPORT={$tvport}&CPORT={$clport}", NULL);
 	return 'OK';
 }
 

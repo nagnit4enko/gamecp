@@ -3,11 +3,13 @@
 	$(document).on("click", "[data-server-create]", function(e) {
 		$(this).blur();
 		e.preventDefault();
+		$('#ModalAdd').modal('hide');
+		$('#myModal').modal('show');
+		$("#modal_info").html("<center>Специально обученная обезьяна устанавливает сервер.</center>");
 		cid = $('select[id=server_create_id]').val();
 		maxplayers = $('input[id=server_maxplayers]').val();
 		$.post("http://"+document.domain+"/public/create_server.php", {cid: cid, maxplayers: maxplayers }, function( data ){
-			$("#server_maxplayers").val('');;
-			$('#ModalAdd').modal('hide');
+			$('#myModal').modal('hide');
 			if(data == 'OK'){
 				alertify.success('Выполнено');
 				//setTimeout("document.location.href='"+data+"'", 1500);
