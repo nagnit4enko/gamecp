@@ -4,8 +4,6 @@ import(
 	"fmt"
 	"regexp"
 	"os/exec"
-	"os/user"
-	"strconv"
 	"strings"
 	"net/http"
 	"io/ioutil"
@@ -237,6 +235,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				re := regexp.MustCompile("^[0-9]*$")
 			
 				// Проверка на пустоту
+				if len(MAX) == 0 {
+					fmt.Fprintf(w, "empty game port")
+					return
+				}
 				if len(GPORT) == 0 {
 					fmt.Fprintf(w, "empty game port")
 					return
@@ -251,6 +253,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				}
 				
 				// Проверка на символы
+				if(re.MatchString(MAX) == false){
+					fmt.Fprintf(w, "wrong max players")
+					return
+				}
 				if(re.MatchString(GPORT) == false){
 					fmt.Fprintf(w, "wrong game port name")
 					return
@@ -330,29 +336,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 					fmt.Fprintf(w, "error")
 					return
 				}
-		
-				usr, err := user.Lookup(USER)
-				if err != nil {
-					fmt.Fprintf(w, "error")
-					return
-				}
-		
-				UID, _ := strconv.Atoi(usr.Uid)
-				GID, _ := strconv.Atoi(usr.Gid) 
-		
-				err = os.Chown("/home/"+USER+"/csgoserver", UID, GID)
+				
+				out, err = exec.Command("/home/"+USER+"/copy.sh").Output()		
+				out, err = exec.Command("chown", "-R", USER+":"+USER, "/home/"+USER).Output()
 				if err != nil{ 
 					fmt.Fprintf(w, "error")
 					return
 				}
 				
-				err = os.Chown("/home/"+USER+"/copy.sh", UID, GID)
-				if err != nil{ 
-					fmt.Fprintf(w, "error")
-					return
-				}
-				
-				out, err = exec.Command("/home/"+USER+"/copy.sh").Output()				
 				CMD := "/home/"+USER+"/csgoserver update-restart"
 				out, err = exec.Command("su", "-", USER, "-c", CMD).Output()
 				return
